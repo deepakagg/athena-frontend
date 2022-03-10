@@ -2,10 +2,12 @@ import { Alert, Button, Divider, Form, Input } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import authService from '../../../../services/authService';
 import { useState } from 'react';
+import { useHistory } from "react-router-dom";
 
 export const LoginForm = (props: Record<string, unknown>) => {
   const showForgetPassword = true;
   const onForgetPasswordClick = () => {};
+  const history = useHistory();
   const [form] = Form.useForm();
   const [loginState, setLoginState] = useState(false);
   const [loginLoaderState, setLoginLoaderState] = useState(false);
@@ -15,6 +17,9 @@ export const LoginForm = (props: Record<string, unknown>) => {
     const response = await authService.loginUser(email, password);
     setLoginState(response);
     setLoginLoaderState(false);
+    if(response){
+      history.push("/app/user-dashboard");
+    }
   }
 
   const onFinish = (values: any) => {

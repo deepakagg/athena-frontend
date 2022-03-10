@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "../configs/AppConfig";
 
 const http = axios.create({
-    baseURL: 'http://athena.localhost:8000',
+    baseURL: API_BASE_URL,
     headers: {
         'Content-type': 'application/json',
     }
@@ -16,6 +17,7 @@ class AxiosService {
 
     public setAuthToken(authToken: string) {
         this._authToken = authToken;
+        window.sessionStorage.setItem('authToken', authToken);
         this._config = {
             headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -23,24 +25,22 @@ class AxiosService {
         }
     }
 
-    public deleteAuthToken(){
+    public deleteAuthToken() {
         this._authToken = undefined;
-    }
-
-    public getAuthToken() {
-        return this._authToken;
+        this._config = {
+            headers: {}
+        }
+        window.sessionStorage.removeItem('authToken')
     }
 
     public setRefreshToken(refreshToken: string) {
         this._refreshToken = refreshToken;
+        localStorage.setItem('refreshToken', refreshToken);
     }
 
     public deleteRefreshToken() {
         this._refreshToken = undefined;
-    }
-
-    public getRefreshToken() {
-        return this._refreshToken;
+        localStorage.removeItem('refreshToken');
     }
 
     public async get(route: string) {

@@ -1,12 +1,28 @@
 import { Alert, Button, Divider, Form, Input } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import authService from '../../../../services/authService';
+import { useState } from 'react';
 
 export const LoginForm = (props: Record<string, unknown>) => {
   const showForgetPassword = true;
   const onForgetPasswordClick = () => {};
+  const [form] = Form.useForm();
+  const [loginState, setLoginState] = useState(false);
+  const [loginLoaderState, setLoginLoaderState] = useState(false);
+
+  const onSignInClick = async (email: string, password: string) => {
+    setLoginLoaderState(true);
+    const response = await authService.loginUser(email, password);
+    setLoginState(response);
+    setLoginLoaderState(false);
+  }
+
+  const onFinish = (values: any) => {
+    onSignInClick(values.email, values.password);
+  };
 
   return (
-    <Form layout="vertical" name="login-form" onFinish={() => {}}>
+    <Form form={form} layout="vertical" name="login-form" onFinish={onFinish}>
       <Form.Item
         name="email"
         label="Email"
@@ -54,7 +70,7 @@ export const LoginForm = (props: Record<string, unknown>) => {
         <Input.Password prefix={<LockOutlined className="text-primary" />} />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" block loading={true}>
+        <Button type="primary" htmlType="submit" block loading={loginLoaderState}>
           Sign In
         </Button>
       </Form.Item>

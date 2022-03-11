@@ -6,18 +6,19 @@ import { useHistory } from "react-router-dom";
 
 export const LoginForm = (props: Record<string, unknown>) => {
   const showForgetPassword = true;
-  const onForgetPasswordClick = () => {};
+  const onForgetPasswordClick = () => { };
   const history = useHistory();
   const [form] = Form.useForm();
-  const [loginState, setLoginState] = useState(false);
+  const [loginState, setLoginState] = useState(true);
   const [loginLoaderState, setLoginLoaderState] = useState(false);
 
   const onSignInClick = async (email: string, password: string) => {
+    setLoginState(true);
     setLoginLoaderState(true);
     const response = await authService.loginUser(email, password);
     setLoginState(response);
     setLoginLoaderState(false);
-    if(response){
+    if (response) {
       history.push("/app/user-dashboard");
     }
   }
@@ -48,11 +49,10 @@ export const LoginForm = (props: Record<string, unknown>) => {
         name="password"
         label={
           <div
-            className={`${
-              showForgetPassword
-                ? "d-flex justify-content-between w-100 align-items-center"
-                : ""
-            }`}
+            className={`${showForgetPassword
+              ? "d-flex justify-content-between w-100 align-items-center"
+              : ""
+              }`}
           >
             <span>Password</span>
             {showForgetPassword && (
@@ -79,6 +79,9 @@ export const LoginForm = (props: Record<string, unknown>) => {
           Sign In
         </Button>
       </Form.Item>
+      {!loginState ? <Form.Item>
+        <Alert message="Incorrect email or password" type="error" showIcon />
+      </Form.Item> : <div></div>}
     </Form>
   );
 };

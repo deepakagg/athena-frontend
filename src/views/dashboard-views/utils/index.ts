@@ -1,4 +1,20 @@
 export default class Utils {
+    static getRouteInfo(navTree: any, path: any): any {
+		if( navTree.path === path ){
+		  return navTree;
+		}
+		let route; 
+		for (let p in navTree) {
+		  if( navTree.hasOwnProperty(p) && typeof navTree[p] === 'object' ) {
+				route = this.getRouteInfo(navTree[p], path);
+				if(route){
+					return route;
+				}
+		  }
+		}
+		return route;
+	}	
+    
     static getColorContrast(hex: any){
 		if(!hex) {
 			return 'dark'

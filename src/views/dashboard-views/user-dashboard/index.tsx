@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { connect } from 'react-redux';
 // import SideNav from 'components/layout-components/SideNav';
 // import TopNav from 'components/layout-components/TopNav';
@@ -14,9 +14,7 @@ import {
     Button,
 } from "antd";
 import authService from '../../../services/authService';
-import { useHistory } from "react-router-dom";
-
-import navigationConfig from "configs/NavigationConfig";
+import { Route, Switch, useHistory } from "react-router-dom";
 import {
     SIDE_NAV_WIDTH,
     SIDE_NAV_COLLAPSED_WIDTH,
@@ -25,10 +23,13 @@ import {
     DIR_RTL,
     DIR_LTR
 } from '../constants';
-// import utils from 'utils';
+import utils from '../utils';
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { LogoutOutlined } from '@ant-design/icons';
 import SideNav from '../components/side-nav';
+import PageHeader from '../components/page-header';
+import navigationConfig from "../../../configs/NavigationConfig";
+import AppContainer from './app-container';
 
 const { Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -36,22 +37,27 @@ const { useBreakpoint } = Grid;
 export const UserDashboard = () => {
     const isMobile = false;
     const isNavSide = true;
+    const isNavTop = false;
     const [navCollapsed, setNavCollapsed] = useState(false);
-    // const currentRouteInfo = utils.getRouteInfo(navigationConfig, location.pathname)
-    // const screens = utils.getBreakPoint(useBreakpoint());
-    // const isMobile = screens.length === 0 ? false : !screens.includes('lg')
-    // const isNavSide = navType === NAV_TYPE_SIDE
-    //   const isNavTop = navType === NAV_TYPE_TOP
-    //   const getLayoutGutter = () => {
-    //     if(isNavTop || isMobile) {
-    //       return 0
-    //     }
-    //     return navCollapsed ? SIDE_NAV_COLLAPSED_WIDTH : SIDE_NAV_WIDTH
-    //   }
+    const getLayoutGutter = () => {
+        if (isNavTop || isMobile) {
+            return 0
+        }
+        return navCollapsed ? SIDE_NAV_COLLAPSED_WIDTH : SIDE_NAV_WIDTH
+    }
 
-    const { status } = useThemeSwitcher();
-
-    const theme = "light";
+    const getLayoutDirectionGutter = () => {
+        const direction = DIR_LTR;
+        if (direction === DIR_LTR) {
+            return { paddingLeft: getLayoutGutter() }
+        }
+        if (direction === DIR_RTL) {
+            return { paddingRight: getLayoutGutter() }
+        }
+        return { paddingLeft: getLayoutGutter() }
+    }
+    // eslint-disable-next-line no-restricted-globals
+    const currentRouteInfo = utils.getRouteInfo(navigationConfig, location.pathname)
     const history = useHistory();
 
     const onLogout = () => {
@@ -73,7 +79,6 @@ export const UserDashboard = () => {
     //     }
     //     return {paddingLeft: getLayoutGutter()}
     //   }
-
     return (
         <Layout>
             <HeaderNav isMobile={isMobile} navCollapsed={navCollapsed} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={setNavCollapsed} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} />
@@ -82,18 +87,15 @@ export const UserDashboard = () => {
             </Layout>
             {/* {(isNavTop && !isMobile) ? <TopNav routeInfo={currentRouteInfo}/> : null}
       <Layout className="app-container">
-        {(isNavSide && !isMobile) ? <SideNav routeInfo={currentRouteInfo}/> : null }
-        <Layout className="app-layout" style={getLayoutDirectionGutter()}>
-          <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
-            <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
-            <Content>
-              <AppViews />
-            </Content>
-          </div>
-          <Footer />
-        </Layout>
-      </Layout>
-      {isMobile && <MobileNav />} */}
+        {(isNavSide && !isMobile) ? <SideNav routeInfo={currentRouteInfo}/> : null } */}
+            <Layout className="app-layout" style={getLayoutDirectionGutter()}>
+                <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
+                    <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
+                    <Content>
+                        <AppContainer itemSelected={history.location.pathname.split('/')[3]}/>
+                    </Content>
+                </div>
+            </Layout>
         </Layout>
     )
 }

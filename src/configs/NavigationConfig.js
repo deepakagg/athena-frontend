@@ -4,21 +4,21 @@ import {
 import { APP_PREFIX_PATH } from './AppConfig'
 
 const dashBoardNavTree = [{
-  key: 'manage',
-  path: `${APP_PREFIX_PATH}/`,
-  title: 'Manage',
+  key: 'home',
+  path: `${APP_PREFIX_PATH}/user-dashboard`,
+  title: 'Home',
   icon: RobotOutlined,
-  breadcrumb: false,
+  breadcrumb: true,
   submenu: [{
     key: 'manage-users',
-    path: `${APP_PREFIX_PATH}/`,
+    path: `${APP_PREFIX_PATH}/user-dashboard`,
     title: 'Manage users',
     icon: RobotOutlined,
     breadcrumb: true,
     submenu: [
       {
         key: 'manage-users-list',
-        path: `${APP_PREFIX_PATH}/app/manage-users-list`,
+        path: `${APP_PREFIX_PATH}/user-dashboard/manage-users-list`,
         title: 'User list',
         icon: '',
         breadcrumb: true,
@@ -26,7 +26,7 @@ const dashBoardNavTree = [{
       },
       {
         key: 'manage-user-audit-logs',
-        path: `${APP_PREFIX_PATH}/app/manage-user-audit-logs`,
+        path: `${APP_PREFIX_PATH}/user-dashboard/manage-user-audit-logs`,
         title: 'Audit logs',
         icon: '',
         breadcrumb: true,

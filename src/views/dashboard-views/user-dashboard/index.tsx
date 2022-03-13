@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 // import SideNav from 'components/layout-components/SideNav';
 // import TopNav from 'components/layout-components/TopNav';
@@ -28,12 +28,15 @@ import {
 // import utils from 'utils';
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { LogoutOutlined } from '@ant-design/icons';
+import SideNav from '../components/side-nav';
 
 const { Content } = Layout;
 const { useBreakpoint } = Grid;
 
 export const UserDashboard = () => {
     const isMobile = false;
+    const isNavSide = true;
+    const [navCollapsed, setNavCollapsed] = useState(false);
     // const currentRouteInfo = utils.getRouteInfo(navigationConfig, location.pathname)
     // const screens = utils.getBreakPoint(useBreakpoint());
     // const isMobile = screens.length === 0 ? false : !screens.includes('lg')
@@ -73,7 +76,10 @@ export const UserDashboard = () => {
 
     return (
         <Layout>
-            <HeaderNav isMobile={isMobile} navCollapsed={undefined} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={undefined} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} />
+            <HeaderNav isMobile={isMobile} navCollapsed={navCollapsed} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={setNavCollapsed} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} />
+            <Layout className="app-container">
+                {(isNavSide && !isMobile) ? <SideNav routeInfo={''} navCollapsed={navCollapsed} sideNavTheme={undefined} hideGroupTitle={undefined} localization={false} /> : null}
+            </Layout>
             {/* {(isNavTop && !isMobile) ? <TopNav routeInfo={currentRouteInfo}/> : null}
       <Layout className="app-container">
         {(isNavSide && !isMobile) ? <SideNav routeInfo={currentRouteInfo}/> : null }

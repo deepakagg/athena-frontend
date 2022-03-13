@@ -20,12 +20,6 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
     const { navCollapsed, mobileNav, navType, headerNavColor, toggleCollapsedNav, onMobileNavToggle, isMobile, currentTheme, direction } = props;
     const [searchActive, setSearchActive] = useState(false)
 
-    const mode = ()=> {
-        if(!headerNavColor) {
-          return utils.getColorContrast(currentTheme === 'dark' ? '#00000' : '#ffffff' )
-        }
-        return utils.getColorContrast(headerNavColor)
-      } 
     const onSearchActive = () => {
         setSearchActive(true)
     }
@@ -43,14 +37,15 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
     }
 
     const isNavTop = navType === NAV_TYPE_TOP ? true : false
-    //   const mode = ()=> {
-    //     if(!headerNavColor) {
-    //       return utils.getColorContrast(currentTheme === 'dark' ? '#00000' : '#ffffff' )
-    //     }
-    //     return utils.getColorContrast(headerNavColor)
-    //   }
-    // const navMode = mode()
-    const navMode = headerNavColor;
+
+
+    const mode = () => {
+        if (!headerNavColor) {
+            return utils.getColorContrast(currentTheme === 'dark' ? '#00000' : '#ffffff')
+        }
+        return utils.getColorContrast(headerNavColor)
+    }
+    const navMode = mode()
     const getNavWidth = () => {
         if (isNavTop || isMobile) {
             return '0px'
@@ -71,7 +66,7 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
     return (
         <Header className={`app-header ${navMode}`} style={{ backgroundColor: headerNavColor }}>
             <div className={`app-header-wrapper ${isNavTop ? 'layout-top-nav' : ''}`}>
-                <Logo logoType={navMode} navCollapsed={undefined} />
+                <Logo logoType={navMode} navCollapsed={navCollapsed} />
                 <div className="nav" style={{ width: `calc(100% - ${getNavWidth()})` }}>
                     <div className="nav-left">
                         <ul className="ant-menu ant-menu-root ant-menu-horizontal">
@@ -95,13 +90,6 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
                             }
                         </ul>
                     </div>
-                    {/* <div className="nav-right">
-            <NavNotification />
-            <NavLanguage />
-            <NavProfile />
-            <NavPanel direction={direction} />
-          </div>
-          <NavSearch active={searchActive} close={onSearchClose}/> */}
                     <div className="nav-right">
                         <NavProfile signOut={props.onLogout} />
                     </div>

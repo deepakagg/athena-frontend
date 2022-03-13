@@ -7,7 +7,7 @@ import {
 import { env } from "./EnvironmentConfig";
 
 export const APP_NAME = "Emilus";
-export const API_BASE_URL = "http://localhost:8000";
+export const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
 export const APP_PREFIX_PATH = "/app";
 export const AUTH_PREFIX_PATH = "/auth";
 

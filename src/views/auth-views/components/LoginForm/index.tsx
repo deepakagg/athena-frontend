@@ -1,12 +1,34 @@
 import { Alert, Button, Divider, Form, Input } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import authService from '../../../../services/authService';
+import { useState } from 'react';
+import { useHistory } from "react-router-dom";
 
 export const LoginForm = (props: Record<string, unknown>) => {
   const showForgetPassword = true;
-  const onForgetPasswordClick = () => {};
+  const onForgetPasswordClick = () => { };
+  const history = useHistory();
+  const [form] = Form.useForm();
+  const [loginState, setLoginState] = useState(true);
+  const [loginLoaderState, setLoginLoaderState] = useState(false);
+
+  const onSignInClick = async (email: string, password: string) => {
+    setLoginState(true);
+    setLoginLoaderState(true);
+    const response = await authService.loginUser(email, password);
+    setLoginState(response);
+    setLoginLoaderState(false);
+    if (response) {
+      history.push("/app/user-dashboard");
+    }
+  }
+
+  const onFinish = (values: any) => {
+    onSignInClick(values.email, values.password);
+  };
 
   return (
-    <Form layout="vertical" name="login-form" onFinish={() => {}}>
+    <Form form={form} layout="vertical" name="login-form" onFinish={onFinish}>
       <Form.Item
         name="email"
         label="Email"
@@ -27,11 +49,10 @@ export const LoginForm = (props: Record<string, unknown>) => {
         name="password"
         label={
           <div
-            className={`${
-              showForgetPassword
-                ? "d-flex justify-content-between w-100 align-items-center"
-                : ""
-            }`}
+            className={`${showForgetPassword
+              ? "d-flex justify-content-between w-100 align-items-center"
+              : ""
+              }`}
           >
             <span>Password</span>
             {showForgetPassword && (
@@ -54,10 +75,13 @@ export const LoginForm = (props: Record<string, unknown>) => {
         <Input.Password prefix={<LockOutlined className="text-primary" />} />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" block loading={true}>
+        <Button type="primary" htmlType="submit" block loading={loginLoaderState}>
           Sign In
         </Button>
       </Form.Item>
+      {!loginState ? <Form.Item>
+        <Alert message="Incorrect email or password" type="error" showIcon />
+      </Form.Item> : <div></div>}
     </Form>
   );
 };

@@ -4,14 +4,15 @@ import { Button, Layout } from "antd";
 import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@ant-design/icons';
 import Logo from '../../components/logo';
 // import NavNotification from './NavNotification';
-// import NavProfile from './NavProfile';
+import NavProfile from '../nav-profile';
 // import NavLanguage from './NavLanguage';
 // import NavPanel from './NavPanel';
 // import NavSearch  from './NavSearch';
 // import SearchInput from './NavSearch/SearchInput.js'
 // import { toggleCollapsedNav, onMobileNavToggle } from 'redux/actions/Theme';
 import { NAV_TYPE_TOP, SIDE_NAV_COLLAPSED_WIDTH, SIDE_NAV_WIDTH } from '../../constants';
-// import utils from 'utils'
+import SearchInput from "../search-input";
+import utils from '../../utils'
 
 const { Header } = Layout;
 
@@ -19,6 +20,12 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
     const { navCollapsed, mobileNav, navType, headerNavColor, toggleCollapsedNav, onMobileNavToggle, isMobile, currentTheme, direction } = props;
     const [searchActive, setSearchActive] = useState(false)
 
+    const mode = ()=> {
+        if(!headerNavColor) {
+          return utils.getColorContrast(currentTheme === 'dark' ? '#00000' : '#ffffff' )
+        }
+        return utils.getColorContrast(headerNavColor)
+      } 
     const onSearchActive = () => {
         setSearchActive(true)
     }
@@ -76,16 +83,16 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
                                         {navCollapsed || isMobile ? <MenuUnfoldOutlined className="nav-icon" /> : <MenuFoldOutlined className="nav-icon" />}
                                     </li>
                             }
-                            {/* {
-                isMobile ?
-                <li className="ant-menu-item ant-menu-item-only-child" onClick={() => {onSearchActive()}}>
-                  <SearchOutlined />
-                </li>
-                :
-                <li className="ant-menu-item ant-menu-item-only-child" style={{cursor: 'auto'}}>
-                  <SearchInput mode={mode} isMobile={isMobile} />
-                </li>
-              } */}
+                            {
+                                isMobile ?
+                                    <li className="ant-menu-item ant-menu-item-only-child" onClick={() => { onSearchActive() }}>
+                                        <SearchOutlined />
+                                    </li>
+                                    :
+                                    <li className="ant-menu-item ant-menu-item-only-child" style={{ cursor: 'auto' }}>
+                                        <SearchInput mode={mode} isMobile={isMobile} active={undefined} close={undefined} />
+                                    </li>
+                            }
                         </ul>
                     </div>
                     {/* <div className="nav-right">
@@ -96,7 +103,7 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
           </div>
           <NavSearch active={searchActive} close={onSearchClose}/> */}
                     <div className="nav-right">
-                        <Button type="primary" icon={<LogoutOutlined />} size={'large'} onClick={props.onLogout} />
+                        <NavProfile signOut={props.onLogout} />
                     </div>
                 </div>
             </div>

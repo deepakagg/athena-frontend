@@ -43,6 +43,30 @@ class AuthService {
         return this._loginState;
     }
 
+    public async listUsers() {
+        let userList = [];
+        try{
+            const response = await axiosService.get('/auth/users');
+            userList = response.data.results;
+        }
+        catch (e: any) {
+            userList = [];
+        }
+        return userList;
+    }
+
+    public async deleteUser(userId: string){
+        let userDeleted = false;
+        try{
+            await axiosService.delete(`/auth/users/${userId}`);
+            userDeleted = true;
+        }
+        catch(e) {
+            userDeleted = false;
+        }
+        return userDeleted;
+    }
+
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }

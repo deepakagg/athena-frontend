@@ -23,7 +23,7 @@ export const DashboardLayout = () => {
   return (
     loginState ? <div className="user-dashboard-container">
       <Switch>
-        <Route path="" component={UserDashboardViews} />
+        <Route path="/" component={UserDashboardViews} />
       </Switch>
     </div> : <div></div>
   );

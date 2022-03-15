@@ -5,7 +5,6 @@ import AuthLayout from "layouts/auth-layout";
 import DashboardLayout from "layouts/dashboard-layout";
 import LandingLayout from "layouts/landing-layout";
 import React from "react";
-import useBodyClass from "hooks/useBodyClass";
 
 export const Views = (props: Record<string, any>) => {
   return (
@@ -24,4 +23,3 @@ export const Views = (props: Record<string, any>) => {
 };
 
 export default Views;
-//export default connect(mapStateToProps)(Views);

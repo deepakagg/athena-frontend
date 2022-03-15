@@ -1,6 +1,5 @@
 import React from "react";
 import { Menu, Dropdown, Avatar } from "antd";
-// import { connect } from 'react-redux'
 import { 
   EditOutlined, 
   SettingOutlined, 
@@ -8,8 +7,6 @@ import {
   QuestionCircleOutlined, 
   LogoutOutlined 
 } from '@ant-design/icons';
-import Icon from '../icon';
-// import { signOut } from 'redux/actions/Auth';
 
 const menuItem = [
 	{
@@ -50,16 +47,6 @@ export const NavProfile = (props: {signOut: any}) => {
       </div>
       <div className="nav-profile-body">
         <Menu>
-          {/* {menuItem.map((el, i) => {
-            return (
-              <Menu.Item key={i}>
-                <a href={el.path}>
-                  <Icon type={el.icon} className=''/>
-                  <span className="font-weight-normal">{el.title}</span>
-                </a>
-              </Menu.Item>
-            );
-          })} */}
           <Menu.Item key={menuItem.length + 1} onClick={e => props.signOut()}>
             <span>
               <LogoutOutlined />
@@ -81,5 +68,4 @@ export const NavProfile = (props: {signOut: any}) => {
   );
 }
 
-// export default connect(null, {signOut})(NavProfile)
 export default NavProfile;

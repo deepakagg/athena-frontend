@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { Button, Layout } from "antd";
-import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@ant-design/icons';
+import { Layout } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@ant-design/icons';
 import Logo from '../../components/logo';
-// import NavNotification from './NavNotification';
 import NavProfile from '../nav-profile';
-// import NavLanguage from './NavLanguage';
-// import NavPanel from './NavPanel';
-// import NavSearch  from './NavSearch';
-// import SearchInput from './NavSearch/SearchInput.js'
-// import { toggleCollapsedNav, onMobileNavToggle } from 'redux/actions/Theme';
 import { NAV_TYPE_TOP, SIDE_NAV_COLLAPSED_WIDTH, SIDE_NAV_WIDTH } from '../../constants';
 import SearchInput from "../search-input";
 import utils from '../../utils'
@@ -17,7 +10,8 @@ import utils from '../../utils'
 const { Header } = Layout;
 
 export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: any; headerNavColor: any; toggleCollapsedNav: any; onMobileNavToggle: any; isMobile: any; currentTheme: any; direction: any; onLogout: any; }) => {
-    const { navCollapsed, mobileNav, navType, headerNavColor, toggleCollapsedNav, onMobileNavToggle, isMobile, currentTheme, direction } = props;
+    const { navCollapsed, mobileNav, navType, headerNavColor, toggleCollapsedNav, onMobileNavToggle, isMobile, currentTheme } = props;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchActive, setSearchActive] = useState(false)
 
     const onSearchActive = () => {
@@ -99,10 +93,4 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
     )
 }
 
-// const mapStateToProps = ({ theme }) => {
-//   const { navCollapsed, navType, headerNavColor, mobileNav, currentTheme, direction } =  theme;
-//   return { navCollapsed, navType, headerNavColor, mobileNav, currentTheme, direction }
-// };
-
-// export default connect(mapStateToProps, {toggleCollapsedNav, onMobileNavToggle})(HeaderNav);
 export default HeaderNav;

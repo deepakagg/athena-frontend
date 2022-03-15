@@ -5,57 +5,42 @@ import moment from 'moment';
 import UserView from './user-view';
 import AvatarStatus from './avatar-status';
 import authService from 'services/authService';
+import userService from 'services/userService';
 import styled from 'styled-components';
+import {
+	updateUserList,
+} from '../../dashboardSlice';
 
 const SpacedActionItem = styled.div`
     margin-left: 20px;
 `
 
-export class UserList extends Component {
+interface IProps {
+	userList: any[],
+	dispatchUserList: any,
+}
 
+export class UserList extends Component<IProps> {
 	state = {
-		users: [],
 		userProfileVisible: false,
 		selectedUser: null
 	}
 
 	componentDidMount = async () => {
 		try {
-			const response = await authService.listUsers();
-			const userlist = response.map((item: any) => {
-				return ({
-					"id": item['id'],
-					"name": `${item['first_name']} ${item['last_name']}`,
-					"email": item['email'],
-					"img": "/img/avatars/avatar-common.png",
-					"role": item['is_admin'] ? 'Admin' : 'User',
-					"lastOnline": item['last_login'] ? Math.round(Date.parse(item['last_login']) / 1000) : 0,
-					"status": item['is_active'] ? 'active' : 'inactive',
-					"personalInfo": {
-						"location": "New York, US",
-						"title": "Product Manager",
-						"birthday": "10/10/1992",
-						"phoneNumber": "+12-123-1234",
-						"facebook": "facebook.com/sample",
-						"twitter": "twitter.com/sample",
-						"instagram": "instagram.com/sample",
-						"site": "samplesite.com"
-					}
-				});
-			});
-			this.setState({ users: userlist });
+			const userlist = await userService.getUserList();
+			this.props.dispatchUserList(updateUserList(userlist));
 		}
 		catch (e) {
-			this.setState({ users: [] });
+			this.props.dispatchUserList(updateUserList([]));
 		}
 	}
 
 	deleteUser = async (userId: any, email: string) => {
 		const response = await authService.deleteUser(userId);
 		if (response) {
-			this.setState({
-				users: this.state.users.filter((item: { id: any; }) => item.id !== userId),
-			})
+			const users = this.props.userList.filter((item: { id: any; }) => item.id !== userId)
+			this.props.dispatchUserList(updateUserList(users));
 			message.success({ content: `Deleted user ${email}`, duration: 2 });
 		}
 		else {
@@ -78,7 +63,7 @@ export class UserList extends Component {
 	}
 
 	render() {
-		const { users, userProfileVisible, selectedUser } = this.state;
+		const { userProfileVisible, selectedUser } = this.state;
 
 		const handleClick = (data: any) => {
 			console.log(data)
@@ -148,7 +133,7 @@ export class UserList extends Component {
 		return (
 			<Card bodyStyle={{ 'padding': '0px' }}>
 				<div className="table-responsive">
-					<Table columns={tableColumns} dataSource={users} rowKey='id' />
+					<Table columns={tableColumns} dataSource={this.props.userList} rowKey='id' />
 				</div>
 				<UserView data={selectedUser} visible={userProfileVisible} close={() => { this.closeUserProfile() }} />
 			</Card>

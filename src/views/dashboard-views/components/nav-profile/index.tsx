@@ -36,7 +36,7 @@ const menuItem = [
 ]
 
 export const NavProfile = (props: {signOut: any}) => {
-  const profileImg = "/img/avatars/thumb-1.jpg";
+  const profileImg = "/img/avatars/avatar-common.png";
   const profileMenu = (
     <div className="nav-profile nav-dropdown">
       <div className="nav-profile-header">

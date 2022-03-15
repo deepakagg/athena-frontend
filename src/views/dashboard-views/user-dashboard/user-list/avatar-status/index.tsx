@@ -1,35 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { Avatar } from 'antd';
+import styled from 'styled-components';
 
-const renderAvatar = (props: { name: any; suffix: any; subTitle: any; id: any; type: any; src: any; icon: any; size: any; shape: any; gap: any; text: any; onNameClick: any; }) => {
+const StyledDetailsContainer = styled.div`
+    margin-left: 20px;
+`
+
+const renderAvatar = (props: { name: any; suffix: any; subtitle: any; id: any; type: any; src: any; icon: any; size: any; shape: any; gap: any; text: any; }) => {
     return <Avatar {...props} className={`ant-avatar-${props.type}`}>{props.text}</Avatar>;
 }
 
-export const AvatarStatus = (props: { name: any; suffix: any; subTitle: any; id: any; type: any; src: any; icon: any; size: any; shape: any; gap: any; text: any; onNameClick: any; }) => {
-    const { name, suffix, subTitle, id, type, src, icon, size, shape, gap, text, onNameClick } = props
+export const AvatarStatus = (props: { name: any; suffix: any; subtitle: any; id: any; type: any; src: any; icon: any; size: any; shape: any; gap: any; text: any; onNameClick: any; }) => {
+    const { name, suffix, subtitle, id, type, src, icon, size, shape, gap, text, onNameClick } = props
     return (
         <div className="avatar-status d-flex align-items-center">
             {renderAvatar({
                 icon, src, type, size, shape, gap, text,
-                name: undefined,
-                suffix: undefined,
-                subTitle: undefined,
-                id: undefined,
-                onNameClick: undefined
+                name: name,
+                suffix: suffix,
+                subtitle: subtitle,
+                id: id
             })}
-            <div className="ml-2">
+            <StyledDetailsContainer>
                 <div>
                     {
                         onNameClick ?
-                            <div onClick={() => onNameClick({ name, subTitle, src, id })} className="avatar-status-name clickable">{name}</div>
+                            <div onClick={() => onNameClick({ name, subtitle, src, id })} className="avatar-status-name clickable">{name}</div>
                             :
                             <div className="avatar-status-name">{name}</div>
                     }
                     <span>{suffix}</span>
                 </div>
-                <div className="text-muted avatar-status-subtitle">{subTitle}</div>
-            </div>
+                <div className="text-muted avatar-status-subtitle">{subtitle}</div>
+            </StyledDetailsContainer>
         </div>
     )
 }

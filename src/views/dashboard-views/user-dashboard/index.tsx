@@ -1,38 +1,23 @@
-import React, { lazy, Suspense, useState } from 'react';
-import { connect } from 'react-redux';
-// import SideNav from 'components/layout-components/SideNav';
-// import TopNav from 'components/layout-components/TopNav';
-// import Loading from 'components/shared-components/Loading';
-// import MobileNav from 'components/layout-components/MobileNav'
+import React, { useState } from 'react';
 import HeaderNav from '../components/header-nav';
-//import PageHeader from 'components/layout-components/PageHeader';
-// import Footer from 'components/layout-components/Footer';
-// import AppViews from 'views/app-views';
 import {
     Layout,
-    Grid,
-    Button,
 } from "antd";
 import authService from '../../../services/authService';
-import { Route, Switch, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {
     SIDE_NAV_WIDTH,
     SIDE_NAV_COLLAPSED_WIDTH,
-    NAV_TYPE_SIDE,
-    NAV_TYPE_TOP,
     DIR_RTL,
     DIR_LTR
 } from '../constants';
 import utils from '../utils';
-import { useThemeSwitcher } from "react-css-theme-switcher";
-import { LogoutOutlined } from '@ant-design/icons';
 import SideNav from '../components/side-nav';
 import PageHeader from '../components/page-header';
 import navigationConfig from "../../../configs/NavigationConfig";
 import AppContainer from './app-container';
 
 const { Content } = Layout;
-const { useBreakpoint } = Grid;
 
 export const UserDashboard = () => {
     const isMobile = false;
@@ -65,20 +50,6 @@ export const UserDashboard = () => {
         history.push("/auth/login");
     }
 
-
-    //   if (status === 'loading') {
-    //     return <Loading cover="page" />;
-    //   }
-
-    //   const getLayoutDirectionGutter = () => {
-    //     if(direction === DIR_LTR) {
-    //       return {paddingLeft: getLayoutGutter()}
-    //     }  
-    //     if(direction === DIR_RTL) {
-    //       return {paddingRight: getLayoutGutter()}
-    //     }
-    //     return {paddingLeft: getLayoutGutter()}
-    //   }
     return (
         <Layout>
             <HeaderNav isMobile={isMobile} navCollapsed={navCollapsed} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={setNavCollapsed} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} />

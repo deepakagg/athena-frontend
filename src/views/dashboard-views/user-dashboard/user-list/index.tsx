@@ -17,7 +17,7 @@ const SpacedActionItem = styled.div`
 
 interface IProps {
 	userList: any[],
-	dispatchUserList: any,
+	dispatch: any,
 }
 
 export class UserList extends Component<IProps> {
@@ -29,10 +29,10 @@ export class UserList extends Component<IProps> {
 	componentDidMount = async () => {
 		try {
 			const userlist = await userService.getUserList();
-			this.props.dispatchUserList(updateUserList(userlist));
+			this.props.dispatch(updateUserList(userlist));
 		}
 		catch (e) {
-			this.props.dispatchUserList(updateUserList([]));
+			this.props.dispatch(updateUserList([]));
 		}
 	}
 
@@ -40,7 +40,7 @@ export class UserList extends Component<IProps> {
 		const response = await authService.deleteUser(userId);
 		if (response) {
 			const users = this.props.userList.filter((item: { id: any; }) => item.id !== userId)
-			this.props.dispatchUserList(updateUserList(users));
+			this.props.dispatch(updateUserList(users));
 			message.success({ content: `Deleted user ${email}`, duration: 2 });
 		}
 		else {

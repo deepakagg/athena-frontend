@@ -3,10 +3,12 @@ import { RootState } from '../../app/store';
 
 export interface DashboardState {
     userlist: any[];
+    auditList: any[];
 }
 
 const initialState: DashboardState = {
     userlist: [],
+    auditList: [],
 };
 
 export const dashboardSlice = createSlice({
@@ -16,11 +18,15 @@ export const dashboardSlice = createSlice({
         updateUserList: (state, action: PayloadAction<any[]>) => {
             state.userlist = action.payload;
         },
+        updateAuditList: (state, action: PayloadAction<any[]>) => {
+            state.auditList = action.payload;
+        },
     },
 });
 
-export const { updateUserList } = dashboardSlice.actions;
+export const { updateUserList, updateAuditList } = dashboardSlice.actions;
 
 export const selectUserList = (state: RootState) => state.dashboard.userlist;
+export const selectAuditList = (state: RootState) => state.dashboard.auditList;
 
 export default dashboardSlice.reducer;

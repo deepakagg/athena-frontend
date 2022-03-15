@@ -1,11 +1,6 @@
 import React from 'react'
 import { SIDE_NAV_WIDTH, SIDE_NAV_COLLAPSED_WIDTH, NAV_TYPE_TOP } from '../../constants';
 import { APP_NAME } from 'configs/AppConfig';
-// import { connect } from "react-redux";
-// import utils from 'utils';
-// import { Grid } from 'antd';
-
-// const { useBreakpoint } = Grid;
 
 const getLogoWidthGutter = (props: { mobileLogo?: any; navCollapsed?: any; navType?: any; }, isMobile: boolean) => {
   const { navCollapsed, navType } = props;
@@ -58,10 +53,4 @@ export const Logo = (props: { mobileLogo?: any; navCollapsed: any; navType?: any
   )
 }
 
-// const mapStateToProps = ({ theme }) => {
-//   const { navCollapsed, navType } =  theme;
-//   return { navCollapsed, navType }
-// };
-
-// export default connect(mapStateToProps)(Logo);
 export default Logo;

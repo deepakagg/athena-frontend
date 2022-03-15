@@ -16,17 +16,15 @@ const themes = {
 };
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeSwitcherProvider
-        themeMap={themes}
-        defaultTheme={THEME_CONFIG.currentTheme}
-        insertionPoint="styles-insertion-point"
-      >
-        <App />
-      </ThemeSwitcherProvider>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <ThemeSwitcherProvider
+      themeMap={themes}
+      defaultTheme={THEME_CONFIG.currentTheme}
+      insertionPoint="styles-insertion-point"
+    >
+      <App />
+    </ThemeSwitcherProvider>
+  </Provider>,
   document.getElementById("root")
 );
 

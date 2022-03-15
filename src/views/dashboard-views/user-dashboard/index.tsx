@@ -16,6 +16,10 @@ import SideNav from '../components/side-nav';
 import PageHeader from '../components/page-header';
 import navigationConfig from "../../../configs/NavigationConfig";
 import AppContainer from './app-container';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import {
+    selectUserList,
+} from '../dashboardSlice';
 
 const { Content } = Layout;
 
@@ -24,6 +28,8 @@ export const UserDashboard = () => {
     const isNavSide = true;
     const isNavTop = false;
     const [navCollapsed, setNavCollapsed] = useState(false);
+    const userList = useAppSelector(selectUserList);
+    const dispatchUserList = useAppDispatch();
     const getLayoutGutter = () => {
         if (isNavTop || isMobile) {
             return 0
@@ -63,7 +69,7 @@ export const UserDashboard = () => {
                 <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
                     <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
                     <Content>
-                        <AppContainer itemSelected={history.location.pathname.split('/')[3]}/>
+                        <AppContainer itemSelected={history.location.pathname.split('/')[3]} userList={userList} dispatchUserList={dispatchUserList} />
                     </Content>
                 </div>
             </Layout>
@@ -71,10 +77,4 @@ export const UserDashboard = () => {
     )
 }
 
-// const mapStateToProps = ({ theme }) => {
-//   const { navCollapsed, navType, locale } =  theme;
-//   return { navCollapsed, navType, locale }
-// };
-
-// export default connect(mapStateToProps)(React.memo(AppLayout));
 export default UserDashboard

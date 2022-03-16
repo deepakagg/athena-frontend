@@ -1,7 +1,7 @@
 import { Route, Switch } from "react-router-dom";
 
 import AuthViews from "views/auth-views";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import authService from '../../services/authService';
 import { useHistory } from "react-router-dom";
 

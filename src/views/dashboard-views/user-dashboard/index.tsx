@@ -19,6 +19,7 @@ import AppContainer from './app-container';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import {
     selectUserList,
+    selectAuditList,
 } from '../dashboardSlice';
 
 const { Content } = Layout;
@@ -29,7 +30,8 @@ export const UserDashboard = () => {
     const isNavTop = false;
     const [navCollapsed, setNavCollapsed] = useState(false);
     const userList = useAppSelector(selectUserList);
-    const dispatchUserList = useAppDispatch();
+    const auditList = useAppSelector(selectAuditList);
+    const dispatch = useAppDispatch();
     const getLayoutGutter = () => {
         if (isNavTop || isMobile) {
             return 0
@@ -69,7 +71,7 @@ export const UserDashboard = () => {
                 <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
                     <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
                     <Content>
-                        <AppContainer itemSelected={history.location.pathname.split('/')[3]} userList={userList} dispatchUserList={dispatchUserList} />
+                        <AppContainer itemSelected={history.location.pathname.split('/')[3]} userList={userList} auditList={auditList} dispatch={dispatch} />
                     </Content>
                 </div>
             </Layout>

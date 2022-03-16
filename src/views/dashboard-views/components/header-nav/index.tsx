@@ -72,7 +72,7 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
                                         {navCollapsed || isMobile ? <MenuUnfoldOutlined className="nav-icon" /> : <MenuFoldOutlined className="nav-icon" />}
                                     </li>
                             }
-                            {
+                            {/* {
                                 isMobile ?
                                     <li className="ant-menu-item ant-menu-item-only-child" onClick={() => { onSearchActive() }}>
                                         <SearchOutlined />
@@ -81,7 +81,7 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
                                     <li className="ant-menu-item ant-menu-item-only-child" style={{ cursor: 'auto' }}>
                                         <SearchInput mode={mode} isMobile={isMobile} active={undefined} close={undefined} />
                                     </li>
-                            }
+                            } */}
                         </ul>
                     </div>
                     <div className="nav-right">

@@ -2,7 +2,6 @@ import { Card, Col, Row } from "antd";
 
 import LoginForm from "../../components/LoginForm";
 import React from "react";
-import { useSelector } from "react-redux";
 
 const backgroundStyle = {
   backgroundImage: "url(/img/others/img-17.jpg)",

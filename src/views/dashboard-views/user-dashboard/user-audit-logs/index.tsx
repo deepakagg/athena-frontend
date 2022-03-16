@@ -4,6 +4,7 @@ import auditService from '../../../../services/auditService';
 import {
     updateAuditList,
 } from '../../dashboardSlice';
+import ReactJson from 'react-json-view';
 
 interface IProps {
     auditList: any[],
@@ -38,6 +39,9 @@ export class UserAuditLogs extends Component<IProps> {
             {
                 title: 'Changes',
                 dataIndex: 'changes',
+                render: (changes: string) => (
+                    <ReactJson collapsed={true} src={JSON.parse(changes)} />
+                ),
             },
         ];
         return (

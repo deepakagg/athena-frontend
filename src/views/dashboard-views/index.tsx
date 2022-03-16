@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { Route, Switch } from "react-router-dom";
 
 import { APP_PREFIX_PATH } from "configs/AppConfig";

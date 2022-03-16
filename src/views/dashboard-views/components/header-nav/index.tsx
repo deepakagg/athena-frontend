@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
-import { MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+// import { SearchOutlined } from '@ant-design/icons';
 import Logo from '../../components/logo';
 import NavProfile from '../nav-profile';
 import { NAV_TYPE_TOP, SIDE_NAV_COLLAPSED_WIDTH, SIDE_NAV_WIDTH } from '../../constants';
-import SearchInput from "../search-input";
+// import SearchInput from "../search-input";
 import utils from '../../utils'
 
 const { Header } = Layout;
@@ -14,9 +15,9 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchActive, setSearchActive] = useState(false)
 
-    const onSearchActive = () => {
-        setSearchActive(true)
-    }
+    // const onSearchActive = () => {
+    //     setSearchActive(true)
+    // }
 
     const onSearchClose = () => {
         setSearchActive(false)

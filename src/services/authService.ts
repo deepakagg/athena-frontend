@@ -45,7 +45,7 @@ class AuthService {
 
     public async listUsers() {
         let userList = [];
-        try{
+        try {
             const response = await axiosService.get('/auth/users');
             userList = response.data.results;
         }
@@ -55,13 +55,28 @@ class AuthService {
         return userList;
     }
 
-    public async deleteUser(userId: string){
+    public async createUser(email: string, password: string, first_name: string, last_name: string, phone_number: string) {
+        let userCreated = false;
+        const data = { email, password, first_name, last_name, phone_number };
+        try {
+            const response = await axiosService.post('/auth/users/', data);
+            if (response.data['user_type']) {
+                userCreated = true;
+            }
+        }
+        catch (e) {
+            userCreated = false;
+        }
+        return userCreated;
+    }
+
+    public async deleteUser(userId: string) {
         let userDeleted = false;
-        try{
+        try {
             await axiosService.delete(`/auth/users/${userId}`);
             userDeleted = true;
         }
-        catch(e) {
+        catch (e) {
             userDeleted = false;
         }
         return userDeleted;

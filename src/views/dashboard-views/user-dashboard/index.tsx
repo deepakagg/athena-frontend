@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import HeaderNav from '../components/header-nav';
 import {
-    Layout,
+    Layout, Modal,
 } from "antd";
 import authService from '../../../services/authService';
 import { useHistory } from "react-router-dom";
@@ -20,7 +20,10 @@ import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import {
     selectUserList,
     selectAuditList,
+    selectCreateUserModalViewState,
+    updateCreateUserModalViewState,
 } from '../dashboardSlice';
+import Signup from 'views/auth-views/authentication/signup';
 
 const { Content } = Layout;
 
@@ -31,6 +34,7 @@ export const UserDashboard = () => {
     const [navCollapsed, setNavCollapsed] = useState(false);
     const userList = useAppSelector(selectUserList);
     const auditList = useAppSelector(selectAuditList);
+    const isOpenCreateUserModal = useAppSelector(selectCreateUserModalViewState);
     const dispatch = useAppDispatch();
     const getLayoutGutter = () => {
         if (isNavTop || isMobile) {
@@ -58,9 +62,13 @@ export const UserDashboard = () => {
         history.push("/auth/login");
     }
 
+    const handleCancel = () => {
+        dispatch(updateCreateUserModalViewState(false));
+    };
+
     return (
         <Layout>
-            <HeaderNav isMobile={isMobile} navCollapsed={navCollapsed} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={setNavCollapsed} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} />
+            <HeaderNav isMobile={isMobile} navCollapsed={navCollapsed} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={setNavCollapsed} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} dispatch={dispatch} />
             <Layout className="app-container">
                 {(isNavSide && !isMobile) ? <SideNav routeInfo={''} navCollapsed={navCollapsed} sideNavTheme={undefined} hideGroupTitle={undefined} localization={false} /> : null}
             </Layout>
@@ -72,6 +80,9 @@ export const UserDashboard = () => {
                     <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
                     <Content>
                         <AppContainer itemSelected={history.location.pathname.split('/')[3]} userList={userList} auditList={auditList} dispatch={dispatch} />
+                        <Modal title="Create User" visible={isOpenCreateUserModal} footer={null} onCancel={handleCancel}>
+                            <Signup isInternal={true} dispatch={dispatch}/>
+                        </Modal>
                     </Content>
                 </div>
             </Layout>

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useHistory } from "react-router-dom";
 
 export const LoginForm = (props: Record<string, unknown>) => {
-  const showForgetPassword = true;
+  const showForgetPassword = false;
   const onForgetPasswordClick = () => { };
   const history = useHistory();
   const [form] = Form.useForm();
@@ -29,6 +29,9 @@ export const LoginForm = (props: Record<string, unknown>) => {
 
   return (
     <Form form={form} layout="vertical" name="login-form" onFinish={onFinish}>
+      {!loginState ? <Form.Item>
+        <Alert message="Incorrect email or password" type="error" showIcon />
+      </Form.Item> : <div></div>}
       <Form.Item
         name="email"
         label="Email"
@@ -39,7 +42,7 @@ export const LoginForm = (props: Record<string, unknown>) => {
           },
           {
             type: "email",
-            message: "Please enter a validate email!",
+            message: "Please enter a valid email!",
           },
         ]}
       >
@@ -79,9 +82,6 @@ export const LoginForm = (props: Record<string, unknown>) => {
           Sign In
         </Button>
       </Form.Item>
-      {!loginState ? <Form.Item>
-        <Alert message="Incorrect email or password" type="error" showIcon />
-      </Form.Item> : <div></div>}
     </Form>
   );
 };

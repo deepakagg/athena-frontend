@@ -10,7 +10,7 @@ import utils from '../../utils'
 
 const { Header } = Layout;
 
-export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: any; headerNavColor: any; toggleCollapsedNav: any; onMobileNavToggle: any; isMobile: any; currentTheme: any; direction: any; onLogout: any; }) => {
+export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: any; headerNavColor: any; toggleCollapsedNav: any; onMobileNavToggle: any; isMobile: any; currentTheme: any; direction: any; onLogout: any; dispatch: any; }) => {
     const { navCollapsed, mobileNav, navType, headerNavColor, toggleCollapsedNav, onMobileNavToggle, isMobile, currentTheme } = props;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchActive, setSearchActive] = useState(false)
@@ -86,7 +86,7 @@ export const HeaderNav = (props: { navCollapsed: any; mobileNav: any; navType: a
                         </ul>
                     </div>
                     <div className="nav-right">
-                        <NavProfile signOut={props.onLogout} />
+                        <NavProfile signOut={props.onLogout} dispatch={props.dispatch}/>
                     </div>
                 </div>
             </div>

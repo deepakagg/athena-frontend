@@ -28,7 +28,7 @@ const Login = (props: Record<string, unknown>) => {
                   />
                   <p>
                     Don't have an account yet?{" "}
-                    <a href="/auth/register-1">Sign Up</a>
+                    <a href="/auth/signup">Sign Up</a>
                   </p>
                 </div>
                 <Row justify="center">

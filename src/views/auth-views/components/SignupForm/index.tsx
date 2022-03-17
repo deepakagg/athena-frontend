@@ -2,24 +2,28 @@ import { Alert, Button, Form, Input, Select } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import authService from '../../../../services/authService';
 import { useState } from 'react';
-import { useHistory } from "react-router-dom";
 import {
-    updateCreateUserModalViewState,
+    updateCreateUserModalViewState, updateUserList,
 } from '../../../dashboard-views/dashboardSlice';
+import userService from "services/userService";
 
 const { Option } = Select;
 
 export const SignupForm = (props: Record<string, any>) => {
-    const { dispatch } = props;
-    const history = useHistory();
+    const { dispatch, isInternal } = props;
     const [form] = Form.useForm();
     const [signupState, setSignupState] = useState(true);
     const [signupLoaderState, setSignupLoaderState] = useState(false);
 
     const prefixSelector = (
-        <Form.Item name="prefix" noStyle>
-            <Select defaultValue="91" style={{ width: 70 }}>
-                <Option value="91">+91</Option>
+        <Form.Item name="prefix" noStyle rules={[
+            {
+                required: true,
+                message: "Please select a country code",
+            },
+        ]}>
+            <Select style={{ width: 70 }}>
+                <Option value="+91">+91</Option>
             </Select>
         </Form.Item>
     );
@@ -30,14 +34,24 @@ export const SignupForm = (props: Record<string, any>) => {
         const response = await authService.createUser(email, password, first_name, last_name, phone_number);
         setSignupState(response);
         setSignupLoaderState(false);
-        if (response) {
-            dispatch(updateCreateUserModalViewState(false));
-            history.push("/app/user-dashboard/manage-users-list");
+        if (dispatch) {
+            if (response) {
+                dispatch(updateCreateUserModalViewState(false));
+            }
+            if (isInternal) {
+                try {
+                    const userlist = await userService.getUserList();
+                    dispatch(updateUserList(userlist));
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            }
         }
     }
 
     const onFinish = (values: any) => {
-        onSignUpClick(values.email, values.password, values.firstName, values.lastName, values.phone);
+        onSignUpClick(values.email, values.password, values.firstName, values.lastName, `${values.prefix}${values.phone}`);
     };
 
     return (

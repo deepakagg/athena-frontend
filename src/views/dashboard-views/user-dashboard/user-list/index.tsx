@@ -69,6 +69,8 @@ export class UserList extends Component<IProps> {
 			console.log(data)
 		}
 
+		const userEmail = authService.getUserEmail();
+
 		const tableColumns: any = [
 			{
 				title: 'User',
@@ -123,7 +125,7 @@ export class UserList extends Component<IProps> {
 						</SpacedActionItem>
 						<SpacedActionItem>
 							<Tooltip title="Delete">
-								<Button danger icon={<DeleteOutlined />} onClick={() => { this.deleteUser(elm.id, elm.email) }} size="small" />
+								<Button disabled={elm.email === userEmail ? true : false} danger icon={<DeleteOutlined />} onClick={() => { this.deleteUser(elm.id, elm.email) }} size="small" />
 							</Tooltip>
 						</SpacedActionItem>
 					</div>

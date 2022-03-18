@@ -17,6 +17,7 @@
     "@types/styled-components": "^5.1.24",
     "antd": "^4.18.6",
     "axios": "^0.26.1",
+    "jwt-decode": "^3.1.2",
     "lang": "^0.1.1",
     "react": "^17.0.2",
     "react-css-theme-switcher": "^0.3.0",

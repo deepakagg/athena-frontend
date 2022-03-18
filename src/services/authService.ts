@@ -82,6 +82,10 @@ class AuthService {
         return userDeleted;
     }
 
+    public getUserEmail() {
+        return axiosService.getUserEmail();
+    }
+
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }

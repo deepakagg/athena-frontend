@@ -11,7 +11,7 @@ import {
 import {
   updateCreateUserModalViewState,
 } from '../../dashboardSlice';
-
+import authService from '../../../../services/authService';
 
 const menuItem = [
   {
@@ -45,8 +45,7 @@ export const NavProfile = (props: { signOut: any, dispatch: any }) => {
         <div className="d-flex">
           <Avatar size={45} src={profileImg} />
           <div className="pl-3">
-            <h4 className="mb-0">Fname Lname</h4>
-            <span className="text-muted">Designation</span>
+            <span>{authService.getUserEmail()}</span>
           </div>
         </div>
       </div>

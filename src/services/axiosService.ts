@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL } from "../configs/AppConfig";
+import jwt_decode from "jwt-decode";
 
 const http = axios.create({
     baseURL: API_BASE_URL,
@@ -12,8 +13,19 @@ class AxiosService {
     private static _instance: AxiosService;
     private _authToken!: string | undefined;
     private _refreshToken!: string | undefined;
+    private _userEmail!: string | undefined;
     private _config!: any;
     private constructor() { }
+
+    public setUserEmail(authToken: string) {
+        const decoded: any = jwt_decode(authToken);
+        this._userEmail = decoded.user;
+        window.sessionStorage.setItem('userEmail', decoded.user);
+    }
+
+    public getUserEmail() {
+        return this._userEmail;
+    }
 
     public setAuthToken(authToken: string) {
         this._authToken = authToken;
@@ -23,6 +35,7 @@ class AxiosService {
                 Authorization: `Bearer ${authToken}`,
             }
         }
+        this.setUserEmail(authToken);
     }
 
     public deleteAuthToken() {

@@ -6,10 +6,8 @@ import {
     updateCreateUserModalViewState, updateUserList,
 } from '../../../dashboard-views/dashboardSlice';
 import userService from "services/userService";
-import React from "react";
 
 const { Option } = Select;
-const Context = React.createContext({ name: 'Default' });
 
 export const SignupForm = (props: Record<string, any>) => {
     const { dispatch, isInternal } = props;

@@ -77,7 +77,7 @@ export const UserDashboard = () => {
         {(isNavSide && !isMobile) ? <SideNav routeInfo={currentRouteInfo}/> : null } */}
             <Layout className="app-layout" style={getLayoutDirectionGutter()}>
                 <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
-                    <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
+                    <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} dispatch={dispatch}/>
                     <Content>
                         <AppContainer itemSelected={history.location.pathname.split('/')[3]} userList={userList} auditList={auditList} dispatch={dispatch} />
                         <Modal title="Create User" visible={isOpenCreateUserModal} footer={null} onCancel={handleCancel}>

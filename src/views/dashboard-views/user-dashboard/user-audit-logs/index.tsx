@@ -40,7 +40,7 @@ export class UserAuditLogs extends Component<IProps> {
                 title: 'Changes',
                 dataIndex: 'changes',
                 render: (changes: string) => (
-                    <ReactJson collapsed={true} src={JSON.parse(changes)} />
+                    <ReactJson collapsed={true} src={JSON.parse(changes)} enableClipboard={false}/>
                 ),
             },
         ];

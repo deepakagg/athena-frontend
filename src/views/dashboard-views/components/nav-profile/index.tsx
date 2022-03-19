@@ -6,11 +6,7 @@ import {
   ShopOutlined,
   QuestionCircleOutlined,
   LogoutOutlined,
-  UserAddOutlined,
 } from '@ant-design/icons';
-import {
-  updateCreateUserModalViewState,
-} from '../../dashboardSlice';
 import authService from '../../../../services/authService';
 
 const menuItem = [
@@ -51,13 +47,7 @@ export const NavProfile = (props: { signOut: any, dispatch: any }) => {
       </div>
       <div className="nav-profile-body">
         <Menu>
-          <Menu.Item key={menuItem.length + 1} onClick={(e) => props.dispatch(updateCreateUserModalViewState(true))}>
-            <span>
-              <UserAddOutlined />
-              <span className="font-weight-normal">Create user</span>
-            </span>
-          </Menu.Item>
-          <Menu.Item key={menuItem.length + 2} onClick={e => props.signOut()}>
+          <Menu.Item key={menuItem.length + 1} onClick={e => props.signOut()}>
             <span>
               <LogoutOutlined />
               <span className="font-weight-normal">Sign Out</span>

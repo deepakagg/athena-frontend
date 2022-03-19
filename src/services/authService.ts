@@ -46,7 +46,7 @@ class AuthService {
     public async listUsers() {
         let userList = [];
         try {
-            const response = await axiosService.get('/auth/users');
+            const response = await axiosService.get('/auth/users/');
             userList = response.data.results;
         }
         catch (e: any) {

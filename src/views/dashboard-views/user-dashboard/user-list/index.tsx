@@ -29,7 +29,7 @@ export const UserList = (props: IProps) => {
 		userService.getUserList()
 			.then((userlist) => { props.dispatch(updateUserList(userlist)); })
 			.catch((e) => { console.log(e); props.dispatch(updateUserList([])); })
-	});
+	}, []);
 
     const openNotification = (isSuccess: boolean, message: string, description: string) => {
         const placement = 'topRight';

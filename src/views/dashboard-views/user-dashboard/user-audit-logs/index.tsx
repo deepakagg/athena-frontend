@@ -16,7 +16,7 @@ export const UserAuditLogs = (props: IProps) => {
         auditService.getAuditList()
             .then((auditLogList) => { props.dispatch(updateAuditList(auditLogList)); })
             .catch((e) => { console.log(e); props.dispatch(updateAuditList([])); })
-    });
+    }, []);
 
     const tableColumns: any = [
         {

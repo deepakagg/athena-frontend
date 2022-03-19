@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Tag, Tooltip, message, Button, Popconfirm, notification } from 'antd';
+import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification } from 'antd';
 import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import UserView from './user-view';
@@ -54,11 +54,9 @@ export const UserList = (props: IProps) => {
 		if (response) {
 			const users = props.userList.filter((item: { id: any; }) => item.id !== userId)
 			props.dispatch(updateUserList(users));
-			// message.success({ content: `Deleted user ${email}`, duration: 2 });
 			openNotification(true, 'Successful', `Deleted user ${email}`);
 		}
 		else {
-			// message.error({ content: `Failed to delete user ${email}`, duration: 2 });
 			openNotification(false, 'Failed', `Failed to delete user ${email}`);
 		}
 	}

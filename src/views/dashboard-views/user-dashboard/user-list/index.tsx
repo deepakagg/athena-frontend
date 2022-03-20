@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
-import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { EyeOutlined, DeleteOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import UserView from './user-view';
 import AvatarStatus from './avatar-status';
@@ -8,12 +8,20 @@ import authService from 'services/authService';
 import userService from 'services/userService';
 import styled from 'styled-components';
 import {
-	updateUserList, setUpdateUserModalViewState, setUserIdState,
+	updateUserList, setUpdateUserModalViewState, setUserIdState, updateCreateUserModalViewState,
 } from '../../dashboardSlice';
+import Flex from 'views/dashboard-views/components/Flex';
 
 const SpacedActionItem = styled.div`
     margin-left: 20px;
 `
+
+const StyledUserCrateButton = styled.div`
+    margin-left: auto; 
+    margin-right: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+`;
 
 interface IProps {
 	userList: any[],
@@ -64,17 +72,8 @@ export const UserList = (props: IProps) => {
 		}
 	}
 
-	const updateUser = async (userId: any, email: string) => {
+	const updateUser = async () => {
 		dispatch(setUpdateUserModalViewState(true));
-		// const response = await authService.deleteUser(userId);
-		// if (response) {
-		// 	const users = userList.filter((item: { id: any; }) => item.id !== userId)
-		// 	dispatch(updateUserList(users));
-		// 	openNotification(true, 'Successful', `Deleted user ${email}`);
-		// }
-		// else {
-		// 	openNotification(false, 'Failed', `Failed to delete user ${email}`);
-		// }
 	}
 
 	const showUserProfile = (userInfo: any) => {
@@ -147,7 +146,7 @@ export const UserList = (props: IProps) => {
 					</SpacedActionItem>
 					<SpacedActionItem>
 						<Tooltip title="Edit">
-							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(elm.id, elm.email); }} size="small" />
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
 						</Tooltip>
 					</SpacedActionItem>
 					<SpacedActionItem>
@@ -165,6 +164,11 @@ export const UserList = (props: IProps) => {
 		<div>
 			{contextHolder}
 			<Card bodyStyle={{ 'padding': '0px' }}>
+				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
+					<StyledUserCrateButton>
+						<Button onClick={(e) => dispatch(updateCreateUserModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user</Button>
+					</StyledUserCrateButton>
+				</Flex>
 				<div className="table-responsive">
 					{datatableLoaderState ? <Spin tip="Loading...">
 						<Table columns={tableColumns} dataSource={userList} rowKey='id' />

@@ -22,8 +22,12 @@ import {
     selectAuditList,
     selectCreateUserModalViewState,
     updateCreateUserModalViewState,
+    selectUpdateUserModalViewState,
+    setUpdateUserModalViewState,
+    selectUserId,
 } from '../dashboardSlice';
 import Signup from 'views/auth-views/authentication/signup';
+import UpdateForm from 'views/auth-views/components/UpdateForm';
 
 const { Content } = Layout;
 
@@ -35,6 +39,8 @@ export const UserDashboard = () => {
     const userList = useAppSelector(selectUserList);
     const auditList = useAppSelector(selectAuditList);
     const isOpenCreateUserModal = useAppSelector(selectCreateUserModalViewState);
+    const isOpenUpdateUserModal = useAppSelector(selectUpdateUserModalViewState);
+    const selectedUserId = useAppSelector(selectUserId);
     const dispatch = useAppDispatch();
     const getLayoutGutter = () => {
         if (isNavTop || isMobile) {
@@ -62,8 +68,12 @@ export const UserDashboard = () => {
         history.push("/auth/login");
     }
 
-    const handleCancel = () => {
+    const handleCancelCreateUser = () => {
         dispatch(updateCreateUserModalViewState(false));
+    };
+
+    const handleCancelUpdateUser = () => {
+        dispatch(setUpdateUserModalViewState(false));
     };
 
     return (
@@ -77,11 +87,14 @@ export const UserDashboard = () => {
         {(isNavSide && !isMobile) ? <SideNav routeInfo={currentRouteInfo}/> : null } */}
             <Layout className="app-layout" style={getLayoutDirectionGutter()}>
                 <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
-                    <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
+                    <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} dispatch={dispatch}/>
                     <Content>
                         <AppContainer itemSelected={history.location.pathname.split('/')[3]} userList={userList} auditList={auditList} dispatch={dispatch} />
-                        <Modal title="Create User" visible={isOpenCreateUserModal} footer={null} onCancel={handleCancel}>
+                        <Modal title="Create User" visible={isOpenCreateUserModal} footer={null} onCancel={handleCancelCreateUser}>
                             <Signup isInternal={true} dispatch={dispatch}/>
+                        </Modal>
+                        <Modal title="Update User" visible={isOpenUpdateUserModal} footer={null} onCancel={handleCancelUpdateUser}>
+                            <UpdateForm isInternal={true} selectedUserId={selectedUserId} dispatch={dispatch}/>
                         </Modal>
                     </Content>
                 </div>

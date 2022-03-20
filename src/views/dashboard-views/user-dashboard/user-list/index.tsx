@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { Card, Table, Tag, Tooltip, message, Button } from 'antd';
-import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react'
+import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
+import { EyeOutlined, DeleteOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import UserView from './user-view';
 import AvatarStatus from './avatar-status';
@@ -8,137 +8,176 @@ import authService from 'services/authService';
 import userService from 'services/userService';
 import styled from 'styled-components';
 import {
-	updateUserList,
+	updateUserList, setUpdateUserModalViewState, setUserIdState, updateCreateUserModalViewState,
 } from '../../dashboardSlice';
+import Flex from 'views/dashboard-views/components/Flex';
 
 const SpacedActionItem = styled.div`
     margin-left: 20px;
 `
+
+const StyledUserCrateButton = styled.div`
+    margin-left: auto; 
+    margin-right: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+`;
 
 interface IProps {
 	userList: any[],
 	dispatch: any,
 }
 
-export class UserList extends Component<IProps> {
-	state = {
-		userProfileVisible: false,
-		selectedUser: null
-	}
+export const UserList = (props: IProps) => {
+	const { userList, dispatch } = props;
+	const [userProfileVisible, setUserProfileVisible] = useState(false);
+	const [selectedUser, setSelectedUser] = useState(null);
+	const [api, contextHolder] = notification.useNotification();
+	const [datatableLoaderState, setDatatableLoaderState] = useState(false);
 
-	componentDidMount = async () => {
-		try {
-			const userlist = await userService.getUserList();
-			this.props.dispatch(updateUserList(userlist));
-		}
-		catch (e) {
-			this.props.dispatch(updateUserList([]));
-		}
-	}
+	useEffect(() => {
+		setDatatableLoaderState(true);
+		userService.getUserList()
+			.then((userlist) => { dispatch(updateUserList(userlist)); setDatatableLoaderState(false); })
+			.catch((e) => { console.log(e); dispatch(updateUserList([])); setDatatableLoaderState(false); })
+	}, [dispatch]);
 
-	deleteUser = async (userId: any, email: string) => {
-		const response = await authService.deleteUser(userId);
-		if (response) {
-			const users = this.props.userList.filter((item: { id: any; }) => item.id !== userId)
-			this.props.dispatch(updateUserList(users));
-			message.success({ content: `Deleted user ${email}`, duration: 2 });
+	const openNotification = (isSuccess: boolean, message: string, description: string) => {
+		const placement = 'topRight';
+		if (isSuccess) {
+			api.success({
+				message: message,
+				description: description,
+				placement,
+			});
 		}
 		else {
-			message.error({ content: `Failed to delete user ${email}`, duration: 2 });
+			api.error({
+				message: message,
+				description: description,
+				placement,
+			});
 		}
-	}
-
-	showUserProfile = (userInfo: any) => {
-		this.setState({
-			userProfileVisible: true,
-			selectedUser: userInfo
-		});
 	};
 
-	closeUserProfile = () => {
-		this.setState({
-			userProfileVisible: false,
-			selectedUser: null
-		});
-	}
-
-	render() {
-		const { userProfileVisible, selectedUser } = this.state;
-
-		const handleClick = (data: any) => {
-			console.log(data)
+	const deleteUser = async (userId: any, email: string) => {
+		const response = await authService.deleteUser(userId);
+		if (response) {
+			const users = userList.filter((item: { id: any; }) => item.id !== userId)
+			dispatch(updateUserList(users));
+			openNotification(true, 'Successful', `Deleted user ${email}`);
 		}
-
-		const tableColumns: any = [
-			{
-				title: 'User',
-				dataIndex: 'name',
-				render: (_: any, record: { img: any; name: any; email: any; }) => (
-					<div className="d-flex">
-						<AvatarStatus src={record.img} name={record.name} subtitle={record.email} size={undefined} suffix={undefined} id={undefined} icon={undefined} shape={undefined} gap={undefined} text={undefined} onNameClick={e => handleClick(e)} />
-					</div>
-				),
-				sorter: {
-					compare: (a: any, b: any) => {
-						a = a.name.toLowerCase();
-						b = b.name.toLowerCase();
-						return a > b ? -1 : b > a ? 1 : 0;
-					},
-				},
-			},
-			{
-				title: 'Role',
-				dataIndex: 'role',
-				sorter: {
-					compare: (a: any, b: any) => a.role.length - b.role.length,
-				},
-			},
-			{
-				title: 'Last online',
-				dataIndex: 'lastOnline',
-				render: (date: number) => (
-					<span>{moment.unix(date).format("MM/DD/YYYY")} </span>
-				),
-				sorter: (a: any, b: any) => moment(a.lastOnline).unix() - moment(b.lastOnline).unix()
-			},
-			{
-				title: 'Status',
-				dataIndex: 'status',
-				render: (status: {} | null | undefined) => (
-					<Tag className="text-capitalize" color={status === 'active' ? 'cyan' : 'red'}>{status}</Tag>
-				),
-				sorter: {
-					compare: (a: any, b: any) => a.status.length - b.status.length,
-				},
-			},
-			{
-				title: '',
-				dataIndex: 'actions',
-				render: (_: any, elm: { id: any; email: string }) => (
-					<div className="text-right d-flex justify-content-end">
-						<SpacedActionItem>
-							<Tooltip title="View">
-								<Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => { this.showUserProfile(elm) }} size="small" />
-							</Tooltip>
-						</SpacedActionItem>
-						<SpacedActionItem>
-							<Tooltip title="Delete">
-								<Button danger icon={<DeleteOutlined />} onClick={() => { this.deleteUser(elm.id, elm.email) }} size="small" />
-							</Tooltip>
-						</SpacedActionItem>
-					</div>
-				)
-			}
-		];
-		return (
-			<Card bodyStyle={{ 'padding': '0px' }}>
-				<div className="table-responsive">
-					<Table columns={tableColumns} dataSource={this.props.userList} rowKey='id' />
-				</div>
-				<UserView data={selectedUser} visible={userProfileVisible} close={() => { this.closeUserProfile() }} />
-			</Card>
-		)
+		else {
+			openNotification(false, 'Failed', `Failed to delete user ${email}`);
+		}
 	}
-}
 
-export default UserList
+	const updateUser = async () => {
+		dispatch(setUpdateUserModalViewState(true));
+	}
+
+	const showUserProfile = (userInfo: any) => {
+		setUserProfileVisible(true);
+		setSelectedUser(userInfo);
+	};
+
+	const closeUserProfile = () => {
+		setUserProfileVisible(false);
+		setSelectedUser(null);
+	}
+
+	const handleClick = (data: any) => {
+		console.log(data)
+	}
+
+	const userEmail = authService.getUserEmail();
+
+	const tableColumns: any = [
+		{
+			title: 'User',
+			dataIndex: 'name',
+			render: (_: any, record: { img: any; name: any; email: any; }) => (
+				<div className="d-flex">
+					<AvatarStatus src={record.img} name={record.name} subtitle={record.email} size={undefined} suffix={undefined} id={undefined} icon={undefined} shape={undefined} gap={undefined} text={undefined} onNameClick={e => handleClick(e)} />
+				</div>
+			),
+			sorter: {
+				compare: (a: any, b: any) => {
+					a = a.name.toLowerCase();
+					b = b.name.toLowerCase();
+					return a > b ? -1 : b > a ? 1 : 0;
+				},
+			},
+		},
+		{
+			title: 'Role',
+			dataIndex: 'role',
+			sorter: {
+				compare: (a: any, b: any) => a.role.length - b.role.length,
+			},
+		},
+		{
+			title: 'Last online',
+			dataIndex: 'lastOnline',
+			render: (date: number) => (
+				<span>{moment.unix(date).format("MM/DD/YYYY")} </span>
+			),
+			sorter: (a: any, b: any) => moment(a.lastOnline).unix() - moment(b.lastOnline).unix()
+		},
+		{
+			title: 'Status',
+			dataIndex: 'status',
+			render: (status: {} | null | undefined) => (
+				<Tag className="text-capitalize" color={status === 'active' ? 'cyan' : 'red'}>{status}</Tag>
+			),
+			sorter: {
+				compare: (a: any, b: any) => a.status.length - b.status.length,
+			},
+		},
+		{
+			title: '',
+			dataIndex: 'actions',
+			render: (_: any, elm: { id: any; email: string }) => (
+				<div className="text-right d-flex justify-content-end">
+					<SpacedActionItem>
+						<Tooltip title="View">
+							<Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => { showUserProfile(elm) }} size="small" />
+						</Tooltip>
+					</SpacedActionItem>
+					<SpacedActionItem>
+						<Tooltip title="Edit">
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
+						</Tooltip>
+					</SpacedActionItem>
+					<SpacedActionItem>
+						<Tooltip title="Delete">
+							<Popconfirm placement="left" title={`Confirm delete user ${elm.email}?`} onConfirm={() => { deleteUser(elm.id, elm.email) }} okText="Yes" cancelText="No">
+								<Button disabled={elm.email === userEmail ? true : false} danger icon={<DeleteOutlined />} size="small" />
+							</Popconfirm>
+						</Tooltip>
+					</SpacedActionItem>
+				</div>
+			)
+		}
+	];
+	return (
+		<div>
+			{contextHolder}
+			<Card bodyStyle={{ 'padding': '0px' }}>
+				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
+					<StyledUserCrateButton>
+						<Button onClick={(e) => dispatch(updateCreateUserModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user</Button>
+					</StyledUserCrateButton>
+				</Flex>
+				<div className="table-responsive">
+					{datatableLoaderState ? <Spin tip="Loading...">
+						<Table columns={tableColumns} dataSource={userList} rowKey='id' />
+					</Spin> : <Table columns={tableColumns} dataSource={userList} rowKey='id' />}
+				</div>
+				<UserView data={selectedUser} visible={userProfileVisible} close={() => { closeUserProfile() }} />
+			</Card>
+		</div>
+	);
+};
+
+export default UserList;

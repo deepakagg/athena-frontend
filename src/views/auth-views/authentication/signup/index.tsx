@@ -12,25 +12,7 @@ const backgroundStyle = {
 const Signup = (props: Record<string, unknown>) => {
   const theme = "light";
   if (props.isInternal) {
-    return (
-      <Card>
-        <div className="my-4">
-          <div className="text-center">
-            <img
-              className="img-fluid"
-              src={`/img/${theme === "light" ? "logo.png" : "logo-white.png"
-                }`}
-              alt=""
-            />
-          </div>
-          <Row justify="center">
-            <Col xs={24} sm={24} md={20} lg={20}>
-              <SignupForm {...props} />
-            </Col>
-          </Row>
-        </div>
-      </Card>
-    );
+    return (<SignupForm {...props} />);
   }
   else {
     return (
@@ -48,9 +30,9 @@ const Signup = (props: Record<string, unknown>) => {
                       alt=""
                     />
                     <p>
-                    Already have an account?{" "}
-                    <a href="/auth/login">Login</a>
-                  </p>
+                      Already have an account?{" "}
+                      <a href="/auth/login">Login</a>
+                    </p>
                   </div>
                   <Row justify="center">
                     <Col xs={24} sm={24} md={20} lg={20}>

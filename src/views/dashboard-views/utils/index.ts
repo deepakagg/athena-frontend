@@ -34,4 +34,27 @@ export default class Utils {
 			return 'light'
 		}	
 	}
+
+	static wildCardSearch(list: any[], input: { toString: () => string; }) {
+		const searchText = (item: { [x: string]: { toString: () => string; }; }) => {
+			for (let key in item) {
+				if (item[key] == null) {
+					continue;
+				}
+				if (item[key].toString().toUpperCase().indexOf(input.toString().toUpperCase()) !== -1) {
+					return true;
+				}
+			}
+		};
+		list = list.filter(value => searchText(value));
+		return list;
+	}
+
+	static deleteArrayRow(list: any[], key: string, value: any) {
+		let data = list
+		if(list) {
+			data = list.filter(item => item[key] !== value)
+		}
+		return data
+	}
 }

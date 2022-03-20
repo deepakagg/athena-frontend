@@ -26,10 +26,10 @@ const Login = (props: Record<string, unknown>) => {
                     }`}
                     alt=""
                   />
-                  <p>
+                  {/* <p>
                     Don't have an account yet?{" "}
                     <a href="/auth/signup">Sign Up</a>
-                  </p>
+                  </p> */}
                 </div>
                 <Row justify="center">
                   <Col xs={24} sm={24} md={20} lg={20}>

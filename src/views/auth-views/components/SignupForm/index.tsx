@@ -80,7 +80,7 @@ export const SignupForm = (props: Record<string, any>) => {
     return (
         <div>
             {contextHolder}
-            <Form form={form} layout="vertical" name="login-form" onFinish={onFinish}>
+            <Form form={form} layout="vertical" name="signup-form" onFinish={onFinish}>
                 {!signupState ? <Form.Item>
                     <Alert message="Signup has failed. Please contact admin if the issue persists" type="error" showIcon />
                 </Form.Item> : <div></div>}

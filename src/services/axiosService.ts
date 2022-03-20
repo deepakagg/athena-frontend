@@ -66,6 +66,11 @@ class AxiosService {
         return response;
     }
 
+    public async put(route: string, data: any) {
+        const response = await http.put(route, data, this._config);
+        return response;
+    }
+
     public async delete(route: string) {
         const response = await http.delete(route, this._config);
         return response;

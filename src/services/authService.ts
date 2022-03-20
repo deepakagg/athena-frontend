@@ -55,6 +55,18 @@ class AuthService {
         return userList;
     }
 
+    public async getUserById(id: string) {
+        let user = undefined;
+        try {
+            const response = await axiosService.get(`/auth/users/${id}/`);
+            user = response.data;
+        }
+        catch (e: any) {
+            user = undefined;
+        }
+        return user;
+    }
+
     public async createUser(email: string, password: string, first_name: string, last_name: string, phone_number: string) {
         let userCreated = false;
         const data = { email, password, first_name, last_name, phone_number };
@@ -70,10 +82,25 @@ class AuthService {
         return userCreated;
     }
 
+    public async updateUser(id: string, email: string, first_name: string, last_name: string, phone_number: string) {
+        let userUpdated = false;
+        const data = { email, first_name, last_name, phone_number };
+        try {
+            const response = await axiosService.put(`/auth/users/${id}/`, data);
+            if (response.data['user_type']) {
+                userUpdated = true;
+            }
+        }
+        catch (e) {
+            userUpdated = false;
+        }
+        return userUpdated;
+    }
+
     public async deleteUser(userId: string) {
         let userDeleted = false;
         try {
-            await axiosService.delete(`/auth/users/${userId}`);
+            await axiosService.delete(`/auth/users/${userId}/`);
             userDeleted = true;
         }
         catch (e) {

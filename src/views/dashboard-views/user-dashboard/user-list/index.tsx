@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
-import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import UserView from './user-view';
 import AvatarStatus from './avatar-status';
@@ -8,7 +8,7 @@ import authService from 'services/authService';
 import userService from 'services/userService';
 import styled from 'styled-components';
 import {
-	updateUserList,
+	updateUserList, setUpdateUserModalViewState, setUserIdState,
 } from '../../dashboardSlice';
 
 const SpacedActionItem = styled.div`
@@ -62,6 +62,19 @@ export const UserList = (props: IProps) => {
 		else {
 			openNotification(false, 'Failed', `Failed to delete user ${email}`);
 		}
+	}
+
+	const updateUser = async (userId: any, email: string) => {
+		dispatch(setUpdateUserModalViewState(true));
+		// const response = await authService.deleteUser(userId);
+		// if (response) {
+		// 	const users = userList.filter((item: { id: any; }) => item.id !== userId)
+		// 	dispatch(updateUserList(users));
+		// 	openNotification(true, 'Successful', `Deleted user ${email}`);
+		// }
+		// else {
+		// 	openNotification(false, 'Failed', `Failed to delete user ${email}`);
+		// }
 	}
 
 	const showUserProfile = (userInfo: any) => {
@@ -130,6 +143,11 @@ export const UserList = (props: IProps) => {
 					<SpacedActionItem>
 						<Tooltip title="View">
 							<Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => { showUserProfile(elm) }} size="small" />
+						</Tooltip>
+					</SpacedActionItem>
+					<SpacedActionItem>
+						<Tooltip title="Edit">
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(elm.id, elm.email); }} size="small" />
 						</Tooltip>
 					</SpacedActionItem>
 					<SpacedActionItem>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification } from 'antd';
+import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
 import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import UserView from './user-view';
@@ -21,39 +21,42 @@ interface IProps {
 }
 
 export const UserList = (props: IProps) => {
+	const { userList, dispatch } = props;
 	const [userProfileVisible, setUserProfileVisible] = useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [api, contextHolder] = notification.useNotification();
+	const [datatableLoaderState, setDatatableLoaderState] = useState(false);
 
 	useEffect(() => {
+		setDatatableLoaderState(true);
 		userService.getUserList()
-			.then((userlist) => { props.dispatch(updateUserList(userlist)); })
-			.catch((e) => { console.log(e); props.dispatch(updateUserList([])); })
-	}, []);
+			.then((userlist) => { dispatch(updateUserList(userlist)); setDatatableLoaderState(false); })
+			.catch((e) => { console.log(e); dispatch(updateUserList([])); setDatatableLoaderState(false); })
+	}, [dispatch]);
 
-    const openNotification = (isSuccess: boolean, message: string, description: string) => {
-        const placement = 'topRight';
-        if (isSuccess) {
-            api.success({
-                message: message,
-                description: description,
-                placement,
-            });
-        }
-        else {
-            api.error({
-                message: message,
-                description: description,
-                placement,
-            });
-        }
-    };
+	const openNotification = (isSuccess: boolean, message: string, description: string) => {
+		const placement = 'topRight';
+		if (isSuccess) {
+			api.success({
+				message: message,
+				description: description,
+				placement,
+			});
+		}
+		else {
+			api.error({
+				message: message,
+				description: description,
+				placement,
+			});
+		}
+	};
 
 	const deleteUser = async (userId: any, email: string) => {
 		const response = await authService.deleteUser(userId);
 		if (response) {
-			const users = props.userList.filter((item: { id: any; }) => item.id !== userId)
-			props.dispatch(updateUserList(users));
+			const users = userList.filter((item: { id: any; }) => item.id !== userId)
+			dispatch(updateUserList(users));
 			openNotification(true, 'Successful', `Deleted user ${email}`);
 		}
 		else {
@@ -143,12 +146,14 @@ export const UserList = (props: IProps) => {
 	return (
 		<div>
 			{contextHolder}
-		<Card bodyStyle={{ 'padding': '0px' }}>
-			<div className="table-responsive">
-				<Table columns={tableColumns} dataSource={props.userList} rowKey='id' />
-			</div>
-			<UserView data={selectedUser} visible={userProfileVisible} close={() => { closeUserProfile() }} />
-		</Card>
+			<Card bodyStyle={{ 'padding': '0px' }}>
+				<div className="table-responsive">
+					{datatableLoaderState ? <Spin tip="Loading...">
+						<Table columns={tableColumns} dataSource={userList} rowKey='id' />
+					</Spin> : <Table columns={tableColumns} dataSource={userList} rowKey='id' />}
+				</div>
+				<UserView data={selectedUser} visible={userProfileVisible} close={() => { closeUserProfile() }} />
+			</Card>
 		</div>
 	);
 };

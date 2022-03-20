@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Card, Table } from 'antd';
+import React, { useEffect, useState } from 'react'
+import { Card, Spin, Table } from 'antd';
 import auditService from '../../../../services/auditService';
 import {
     updateAuditList,
@@ -12,11 +12,15 @@ interface IProps {
 }
 
 export const UserAuditLogs = (props: IProps) => {
+    const { auditList, dispatch } = props;
+    const [datatableLoaderState, setDatatableLoaderState] = useState(false);
+
     useEffect(() => {
+        setDatatableLoaderState(true);
         auditService.getAuditList()
-            .then((auditLogList) => { props.dispatch(updateAuditList(auditLogList)); })
-            .catch((e) => { console.log(e); props.dispatch(updateAuditList([])); })
-    }, []);
+            .then((auditLogList) => { dispatch(updateAuditList(auditLogList)); setDatatableLoaderState(false); })
+            .catch((e) => { console.log(e); dispatch(updateAuditList([])); setDatatableLoaderState(false); })
+    }, [dispatch]);
 
     const tableColumns: any = [
         {
@@ -42,7 +46,9 @@ export const UserAuditLogs = (props: IProps) => {
     return (
         <Card bodyStyle={{ 'padding': '0px' }}>
             <div className="table-responsive">
-                <Table columns={tableColumns} dataSource={props.auditList} rowKey='id' />
+                {datatableLoaderState ? <Spin tip="Loading...">
+                    <Table columns={tableColumns} dataSource={auditList} rowKey='id' />
+                </Spin> : <Table columns={tableColumns} dataSource={auditList} rowKey='id' />}
             </div>
         </Card>
     );

@@ -151,7 +151,7 @@ export const UserList = (props: IProps) => {
 					</SpacedActionItem>
 					<SpacedActionItem>
 						<Tooltip title="Delete">
-							<Popconfirm placement="left" title={`Confirm delete user ${elm.email}?`} onConfirm={() => { deleteUser(elm.id, elm.email) }} okText="Yes" cancelText="No">
+							<Popconfirm disabled={elm.email === userEmail ? true : false} placement="left" title={`Confirm delete user ${elm.email}?`} onConfirm={() => { deleteUser(elm.id, elm.email) }} okText="Yes" cancelText="No">
 								<Button disabled={elm.email === userEmail ? true : false} danger icon={<DeleteOutlined />} size="small" />
 							</Popconfirm>
 						</Tooltip>

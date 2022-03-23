@@ -82,9 +82,9 @@ class AuthService {
         return userCreated;
     }
 
-    public async updateUser(id: string, email: string, first_name: string, last_name: string, phone_number: string) {
+    public async updateUser(id: string, email: string, first_name: string, last_name: string, phone_number: string, is_active: boolean) {
         let userUpdated = false;
-        const data = { email, first_name, last_name, phone_number };
+        const data = { email, first_name, last_name, phone_number, is_active };
         try {
             const response = await axiosService.put(`/auth/users/${id}/`, data);
             if (response.data['user_type']) {

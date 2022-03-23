@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Input, notification } from "antd";
+import { Alert, Button, Form, Input, notification, Switch  } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import authService from '../../../../services/authService';
 import { useEffect, useState } from 'react';
@@ -21,7 +21,8 @@ export const UpdateForm = (props: Record<string, any>) => {
                     firstName: response['first_name'],
                     lastName: response['last_name'],
                     email: response['email'],
-                    phone: response['phone_number']
+                    phone: response['phone_number'],
+                    is_active: response['is_active'] || true
                 });
             })
             .catch((e: any) => { console.log(e); })
@@ -45,10 +46,10 @@ export const UpdateForm = (props: Record<string, any>) => {
         }
     };
 
-    const onUpdateClick = async (id: string, email: string, first_name: string, last_name: string, phone_number: string) => {
+    const onUpdateClick = async (id: string, email: string, first_name: string, last_name: string, phone_number: string, is_active: boolean) => {
         setUpdateState(true);
         setUpdateLoaderState(true);
-        const response = await authService.updateUser(id, email, first_name, last_name, phone_number);
+        const response = await authService.updateUser(id, email, first_name, last_name, phone_number, is_active);
         setUpdateState(response);
         setUpdateLoaderState(false);
         if (dispatch) {
@@ -72,7 +73,7 @@ export const UpdateForm = (props: Record<string, any>) => {
     }
 
     const onFinish = (values: any) => {
-        onUpdateClick(selectedUserId, values.email, values.firstName, values.lastName, values.phone);
+        onUpdateClick(selectedUserId, values.email, values.firstName, values.lastName, values.phone, values.is_active);
     };
 
     return (
@@ -131,6 +132,15 @@ export const UpdateForm = (props: Record<string, any>) => {
                 >
                     <Input />
                 </Form.Item>
+
+                <Form.Item
+                    name="is_active"
+                    label="Active"
+                    valuePropName="checked"
+                >
+                    <Switch />
+                </Form.Item>
+
                 <Form.Item>
                     <Button type="primary" htmlType="submit" block loading={updateLoaderState}>
                         Update user

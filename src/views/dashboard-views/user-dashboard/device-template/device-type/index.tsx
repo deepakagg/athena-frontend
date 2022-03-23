@@ -1,6 +1,8 @@
 import React from 'react'
 import { Input, Row, Col, Card, Form, Select } from 'antd';
 import styled from 'styled-components';
+import { useAppDispatch } from 'app/hooks';
+import { setDeviceName, setDeviceProtocol } from '../../../dashboardSlice';
 
 const StyledWidth = styled.div`
     width: fit-content;
@@ -10,11 +12,19 @@ const { Option } = Select;
 const channels = ['MQTT', 'HTTP', 'LoRaWAN']
 
 const DeviceType = () => {
+    const dispatch = useAppDispatch();
+    const [form] = Form.useForm();
+
+    const onChange = (_: undefined, values: { name: string, channel: string }) => {
+        dispatch(setDeviceName(values.name));
+        dispatch(setDeviceProtocol(values.channel));
+    }
+
     return (
         <Card>
             <StyledWidth><h2>Device type</h2></StyledWidth>
             <StyledWidth><p>Add device type details</p></StyledWidth>
-            <Form name="devicetype">
+            <Form name="devicetype" layout="vertical" form={form} onValuesChange={(props, values) => onChange(props, values)}>
                 <Row key={'devicetyperow'} gutter={16}>
                     <Col sm={24} md={7}>
                         <Form.Item

@@ -1,11 +1,26 @@
-import { Button, Form, message, Tabs } from 'antd';
-import React, { useState } from 'react';
+import { Button, notification, Tabs } from 'antd';
+import React, { useEffect, useState } from 'react';
 import Flex from 'views/dashboard-views/components/Flex';
 import PageHeaderAlt from '../../components/PageHeaderAlt';
 import styled from 'styled-components';
 import DeviceConfiguration from './device-configuration';
 import DeviceDataFormat from './device-data-format';
 import DeviceType from './device-type';
+import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
+import {
+    selectDeviceDetails,
+    selectDeviceName,
+    selectDeviceProtocol,
+    selectDeviceConfiguration,
+    selectDeviceDataFormat,
+    setDeviceDetails,
+    setDeviceName,
+    setDeviceProtocol,
+    setDeviceConfiguration,
+    setDeviceDataFormat,
+} from '../../dashboardSlice';
+import { Device } from 'views/dashboard-views/interface/Device';
+import { v4 as uuidv4 } from 'uuid';
 
 const StyledHeader = styled.div`
     margin-top: 50px;
@@ -17,63 +32,96 @@ const StyledButton = styled(Button)`
 const { TabPane } = Tabs;
 
 export const DeviceTemplate = () => {
-    const [form] = Form.useForm();
-    const [submitLoading, setSubmitLoading] = useState(false)
+    const [submitLoading, setSubmitLoading] = useState(false);
+    const deviceDetails = useAppSelector(selectDeviceDetails);
+    const deviceName = useAppSelector(selectDeviceName);
+    const deviceProtocol = useAppSelector(selectDeviceProtocol);
+    const deviceConfiguration = useAppSelector(selectDeviceConfiguration);
+    const deviceDataFormat = useAppSelector(selectDeviceDataFormat);
+    const dispatch = useAppDispatch();
+
+    const [api, contextHolder] = notification.useNotification();
+
+    useEffect(() => {
+        dispatch(setDeviceName(undefined));
+        dispatch(setDeviceProtocol(undefined));
+        dispatch(setDeviceConfiguration([]));
+        dispatch(setDeviceDataFormat([]));
+    }, [dispatch]);
+
+    const openNotification = (isSuccess: boolean, message: string, description: string) => {
+        const placement = 'topRight';
+        if (isSuccess) {
+            api.success({
+                message: message,
+                description: description,
+                placement,
+            });
+        }
+        else {
+            api.error({
+                message: message,
+                description: description,
+                placement,
+            });
+        }
+    };
 
     const onFinish = () => {
-        setSubmitLoading(true)
-        form.validateFields().then(values => {
-            setTimeout(() => {
-                setSubmitLoading(false)
-                message.success(`Created ${values.name} to product list`);
-            }, 1500);
-        }).catch(info => {
-            setSubmitLoading(false)
-            console.log('info', info)
-            message.error('Please enter all required field ');
-        });
+        setSubmitLoading(true);
+        try {
+            if (deviceName && deviceProtocol) {
+                const deviceId = uuidv4();
+                const data: Device = {
+                    deviceId,
+                    name: deviceName as string,
+                    protocol: deviceProtocol as string,
+                    configuration: deviceConfiguration.filter((item) => { return item !== undefined; }),
+                    dataformat: deviceDataFormat.filter((item) => { return item !== undefined; })
+                }
+                let tempDeviceDetails: Device[] = [];
+                Object.assign(tempDeviceDetails, deviceDetails);
+                tempDeviceDetails.push(data);
+                dispatch(setDeviceDetails(tempDeviceDetails));
+                openNotification(true, 'Successful', `Device with id ${deviceId} added successfully`)
+            } else {
+                openNotification(false, 'Failed', 'Failed to add device, please re check your data');
+            }
+        } catch (e) {
+            console.log(e);
+            openNotification(false, 'Failed', 'Failed to add device. An unexpected error occurred');
+        }
+        setSubmitLoading(false);
     };
 
     return (
         <StyledHeader>
-            <Form
-                layout="vertical"
-                form={form}
-                name="advanced_search"
-                className="ant-advanced-search-form"
-                initialValues={{
-                    heightUnit: 'cm',
-                    widthUnit: 'cm',
-                    weightUnit: 'kg'
-                }}
-            >
-                <PageHeaderAlt className="border-bottom" overlap>
-                    <div className="container">
-                        <Flex className="py-2" mobileFlex={false} justifyContent="between" alignItems="center">
-                            <h2 className="mb-3">{'Add New Device'} </h2>
-                            <div className="mb-3">
-                                <StyledButton className="mr-2">Discard</StyledButton>
-                                <StyledButton type="primary" onClick={() => onFinish()} htmlType="submit" loading={submitLoading} >
-                                    {'ADD'}
-                                </StyledButton>
-                            </div>
-                        </Flex>
-                    </div>
-                </PageHeaderAlt>
+            {contextHolder}
+            <PageHeaderAlt className="border-bottom" overlap>
                 <div className="container">
-                    <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
-                        <TabPane tab="Device type" key="1">
-                            <DeviceType />
-                        </TabPane>
-                        <TabPane tab="Device configuration" key="2">
-                            <DeviceConfiguration />
-                        </TabPane>
-                        <TabPane tab="Device data format" key="3">
-                            <DeviceDataFormat />
-                        </TabPane>
-                    </Tabs>
+                    <Flex className="py-2" mobileFlex={false} justifyContent="between" alignItems="center">
+                        <h2 className="mb-3">{'Add New Device'} </h2>
+                        <div className="mb-3">
+                            <StyledButton type="primary" onClick={() => onFinish()} htmlType="submit" loading={submitLoading} >
+                                ADD
+                            </StyledButton>
+                        </div>
+                    </Flex>
                 </div>
-            </Form>
+            </PageHeaderAlt>
+            <div className="container">
+                <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
+                    <TabPane tab="Device type" key="1">
+                        <DeviceType />
+                    </TabPane>
+                    <TabPane tab="Device configuration" key="2">
+                        <DeviceConfiguration />
+                    </TabPane>
+                    <TabPane tab="Device data format" key="3">
+                        <DeviceDataFormat />
+                    </TabPane>
+                </Tabs>
+            </div>
         </StyledHeader>
     );
 }

@@ -40,6 +40,14 @@ const dashBoardNavTree = [{
         breadcrumb: true,
         submenu: []
       },
+      {
+        key: 'manage-device-list',
+        path: `${APP_PREFIX_PATH}/user-dashboard/device-list`,
+        title: 'Device list',
+        icon: '',
+        breadcrumb: true,
+        submenu: []
+      },
     ]
   }]
 }]

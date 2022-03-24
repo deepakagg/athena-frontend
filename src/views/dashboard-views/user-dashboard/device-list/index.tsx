@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Card, Spin, Table } from 'antd';
 import {
-    selectDeviceTypeDetails,
+    selectDeviceDetails,
 } from '../../dashboardSlice';
 // import ReactJson from 'react-json-view';
 import { useAppSelector } from 'app/hooks';
@@ -11,19 +11,25 @@ import styled from 'styled-components';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 
-const StyledDeviceTypeCreateButton = styled.div`
+const StyledDeviceCreateButton = styled.div`
     margin-left: auto; 
     margin-right: 10px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 `;
 
-export const DeviceTypeList = () => {
+export const DeviceList = () => {
     const [datatableLoaderState, setDatatableLoaderState] = useState(false);
-    const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
+    const deviceDetails = useAppSelector(selectDeviceDetails);
     const history = useHistory();
 
+    console.log(deviceDetails);
+
     const tableColumns: any = [
+        {
+            title: 'Device id',
+            dataIndex: 'deviceId',
+        },
         {
             title: 'Device name',
             dataIndex: 'name',
@@ -32,25 +38,21 @@ export const DeviceTypeList = () => {
             title: 'Device description',
             dataIndex: 'description',
         },
-        {
-            title: 'Device protocol',
-            dataIndex: 'protocol',
-        },
     ];
     return (
         <Card bodyStyle={{ 'padding': '0px' }}>
             <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
-					<StyledDeviceTypeCreateButton>
-						<Button onClick={(e) => history.push("/app/user-dashboard/device-type-template")} type="primary" icon={<PlusCircleOutlined />} block>Create device type</Button>
-					</StyledDeviceTypeCreateButton>
+					<StyledDeviceCreateButton>
+						<Button onClick={(e) => history.push("/app/user-dashboard/device-template")} type="primary" icon={<PlusCircleOutlined />} block>Create device</Button>
+					</StyledDeviceCreateButton>
 				</Flex>
             <div className="table-responsive">
                 {datatableLoaderState ? <Spin tip="Loading...">
-                    <Table columns={tableColumns} dataSource={deviceTypeDetails} rowKey='id' />
-                </Spin> : <Table columns={tableColumns} dataSource={deviceTypeDetails} rowKey='id' />}
+                    <Table columns={tableColumns} dataSource={deviceDetails} rowKey='id' />
+                </Spin> : <Table columns={tableColumns} dataSource={deviceDetails} rowKey='id' />}
             </div>
         </Card>
     );
 };
 
-export default DeviceTypeList;
+export default DeviceList;

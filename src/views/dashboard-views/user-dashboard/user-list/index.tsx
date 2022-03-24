@@ -16,7 +16,7 @@ const SpacedActionItem = styled.div`
     margin-left: 20px;
 `
 
-const StyledUserCrateButton = styled.div`
+const StyledUserCreateButton = styled.div`
     margin-left: auto; 
     margin-right: 10px;
 	margin-top: 10px;
@@ -165,9 +165,9 @@ export const UserList = (props: IProps) => {
 			{contextHolder}
 			<Card bodyStyle={{ 'padding': '0px' }}>
 				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
-					<StyledUserCrateButton>
+					<StyledUserCreateButton>
 						<Button onClick={(e) => dispatch(updateCreateUserModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user</Button>
-					</StyledUserCrateButton>
+					</StyledUserCreateButton>
 				</Flex>
 				<div className="table-responsive">
 					{datatableLoaderState ? <Spin tip="Loading...">

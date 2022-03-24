@@ -2,7 +2,7 @@ import React from 'react'
 import { Input, Row, Col, Card, Form, Select } from 'antd';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
-import { setDeviceName, setDeviceProtocol } from '../../../dashboardSlice';
+import { setDeviceName, setDeviceProtocol, setDeviceDescription } from '../../../dashboardSlice';
 
 const StyledWidth = styled.div`
     width: fit-content;
@@ -15,8 +15,9 @@ const DeviceType = () => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    const onChange = (_: undefined, values: { name: string, channel: string }) => {
+    const onChange = (_: undefined, values: { name: string, description: string, channel: string }) => {
         dispatch(setDeviceName(values.name));
+        dispatch(setDeviceDescription(values.description));
         dispatch(setDeviceProtocol(values.channel));
     }
 
@@ -32,6 +33,17 @@ const DeviceType = () => {
                             name={'name'}
                             fieldKey={'name'}
                             rules={[{ required: true, message: 'Please enter a name' }]}
+                            className="w-100"
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Col>
+                    <Col sm={24} md={7}>
+                        <Form.Item
+                            label="Description"
+                            name={'description'}
+                            fieldKey={'description'}
+                            rules={[{ required: true, message: 'Please enter a description' }]}
                             className="w-100"
                         >
                             <Input />

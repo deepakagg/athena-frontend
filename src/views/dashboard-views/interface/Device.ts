@@ -10,9 +10,10 @@ export interface DataFormat {
     required: boolean;
 }
 
-export interface Device {
-    deviceId: string;
+export interface DeviceTypeTemplate {
+    deviceTypeId: string;
     name: string;
+    description: string;
     protocol: string;
     configuration: Configuration[];
     dataformat: DataFormat[];

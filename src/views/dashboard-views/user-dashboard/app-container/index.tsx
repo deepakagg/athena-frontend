@@ -1,7 +1,7 @@
 import UserList from '../user-list';
 import UserAuditLogs from '../user-audit-logs';
 import DeviceTemplate from "../device-template";
-import DeviceList from "../device-list";
+import DeviceList from "../device-type-list";
 
 export const AppContainer = (props: { itemSelected: string, userList: any, auditList: any, dispatch: any }) => {
     if (props.itemSelected === 'manage-users-list') {

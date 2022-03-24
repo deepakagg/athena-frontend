@@ -1,5 +1,6 @@
 import {
-  RobotOutlined
+  UserOutlined,
+  DatabaseOutlined
 } from '@ant-design/icons';
 import { APP_PREFIX_PATH } from './AppConfig'
 
@@ -7,13 +8,13 @@ const dashBoardNavTree = [{
   key: 'home',
   path: `${APP_PREFIX_PATH}/user-dashboard`,
   title: 'Home',
-  icon: RobotOutlined,
+  icon: UserOutlined,
   breadcrumb: true,
   submenu: [{
     key: 'manage-users',
     path: `${APP_PREFIX_PATH}/user-dashboard`,
     title: 'Manage users',
-    icon: RobotOutlined,
+    icon: UserOutlined,
     breadcrumb: true,
     submenu: [
       {
@@ -31,19 +32,19 @@ const dashBoardNavTree = [{
         icon: '',
         breadcrumb: true,
         submenu: []
-      },
-      {
-        key: 'manage-device-template',
-        path: `${APP_PREFIX_PATH}/user-dashboard/device-template`,
-        title: 'Device template',
-        icon: '',
-        breadcrumb: true,
-        submenu: []
-      },
+      }]
+  },
+  {
+    key: 'manage-devices',
+    path: `${APP_PREFIX_PATH}/user-dashboard`,
+    title: 'Manage devices',
+    icon: DatabaseOutlined,
+    breadcrumb: true,
+    submenu: [
       {
         key: 'manage-device-list',
         path: `${APP_PREFIX_PATH}/user-dashboard/device-list`,
-        title: 'Device list',
+        title: 'Device type list',
         icon: '',
         breadcrumb: true,
         submenu: []

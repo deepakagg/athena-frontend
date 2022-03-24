@@ -18,9 +18,11 @@ import {
     setDeviceProtocol,
     setDeviceConfiguration,
     setDeviceDataFormat,
+    selectDeviceDescription,
 } from '../../dashboardSlice';
-import { Device } from 'views/dashboard-views/interface/Device';
+import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 import { v4 as uuidv4 } from 'uuid';
+import { useHistory } from "react-router-dom";
 
 const StyledHeader = styled.div`
     margin-top: 50px;
@@ -35,12 +37,14 @@ export const DeviceTemplate = () => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const deviceDetails = useAppSelector(selectDeviceDetails);
     const deviceName = useAppSelector(selectDeviceName);
+    const deviceDescription = useAppSelector(selectDeviceDescription);
     const deviceProtocol = useAppSelector(selectDeviceProtocol);
     const deviceConfiguration = useAppSelector(selectDeviceConfiguration);
     const deviceDataFormat = useAppSelector(selectDeviceDataFormat);
     const dispatch = useAppDispatch();
 
     const [api, contextHolder] = notification.useNotification();
+    const history = useHistory();
 
     useEffect(() => {
         dispatch(setDeviceName(undefined));
@@ -71,19 +75,21 @@ export const DeviceTemplate = () => {
         setSubmitLoading(true);
         try {
             if (deviceName && deviceProtocol) {
-                const deviceId = uuidv4();
-                const data: Device = {
-                    deviceId,
+                const deviceTypeId = uuidv4();
+                const data: DeviceTypeTemplate = {
+                    deviceTypeId,
                     name: deviceName as string,
+                    description: deviceDescription as string,
                     protocol: deviceProtocol as string,
                     configuration: deviceConfiguration.filter((item) => { return item !== undefined; }),
                     dataformat: deviceDataFormat.filter((item) => { return item !== undefined; })
                 }
-                let tempDeviceDetails: Device[] = [];
+                let tempDeviceDetails: DeviceTypeTemplate[] = [];
                 Object.assign(tempDeviceDetails, deviceDetails);
                 tempDeviceDetails.push(data);
                 dispatch(setDeviceDetails(tempDeviceDetails));
-                openNotification(true, 'Successful', `Device with id ${deviceId} added successfully`)
+                openNotification(true, 'Successful', `Device ${deviceName} added successfully`);
+                history.push("/app/user-dashboard/device-list");
             } else {
                 openNotification(false, 'Failed', 'Failed to add device, please re check your data');
             }
@@ -100,7 +106,7 @@ export const DeviceTemplate = () => {
             <PageHeaderAlt className="border-bottom" overlap>
                 <div className="container">
                     <Flex className="py-2" mobileFlex={false} justifyContent="between" alignItems="center">
-                        <h2 className="mb-3">{'Add New Device'} </h2>
+                        <h2 className="mb-3">{'Add New Device Type'} </h2>
                         <div className="mb-3">
                             <StyledButton type="primary" onClick={() => onFinish()} htmlType="submit" loading={submitLoading} >
                                 ADD

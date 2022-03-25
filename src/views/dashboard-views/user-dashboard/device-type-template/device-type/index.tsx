@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Input, Row, Col, Card, Form, Select } from 'antd';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
@@ -12,22 +12,24 @@ const StyledWidth = styled.div`
 const { Option } = Select;
 const channels = ['MQTT', 'HTTP', 'LoRaWAN']
 
-const DeviceType = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined }) => {
+const DeviceType = forwardRef((props: {}, ref) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    useEffect(() => {
-        // console.log('inside useEffect of device type');
-        if (props.deviceTypeDetail) {
-            // console.log(props.deviceTypeDetail);
-            dispatch(setDeviceName(props.deviceTypeDetail.name));
-            dispatch(setDeviceDescription(props.deviceTypeDetail.description));
-            dispatch(setDeviceProtocol(props.deviceTypeDetail.protocol));
-            form.setFieldsValue({ name: props.deviceTypeDetail.name, description: props.deviceTypeDetail.description, protocol: props.deviceTypeDetail.protocol });
-        }
-        // setTimeout(() => {}, 5000);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.deviceTypeDetail]);
+    useImperativeHandle(
+        ref,
+        () => ({
+            loadData(deviceTypeDetail: DeviceTypeTemplate) {
+                if (deviceTypeDetail) {
+                    // console.log(props.deviceTypeDetail);
+                    dispatch(setDeviceName(deviceTypeDetail.name));
+                    dispatch(setDeviceDescription(deviceTypeDetail.description));
+                    dispatch(setDeviceProtocol(deviceTypeDetail.protocol));
+                    form.setFieldsValue({ name: deviceTypeDetail.name, description: deviceTypeDetail.description, protocol: deviceTypeDetail.protocol });
+                }
+            }
+        }),
+    )
 
     const onChange = (_: undefined, values: { name: string, description: string, protocol: string }) => {
         dispatch(setDeviceName(values.name));
@@ -84,6 +86,6 @@ const DeviceType = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined })
             </Form>
         </Card>
     );
-}
+})
 
 export default DeviceType

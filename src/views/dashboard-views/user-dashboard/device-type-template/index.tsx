@@ -1,5 +1,5 @@
 import { Button, notification, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Flex from 'views/dashboard-views/components/Flex';
 import PageHeaderAlt from '../../components/PageHeaderAlt';
 import styled from 'styled-components';
@@ -38,6 +38,9 @@ const { TabPane } = Tabs;
 export const DeviceTypeTemplateView = () => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [deviceTypeDetail, setDeviceTypeDetail] = useState<DeviceTypeTemplate | undefined>(undefined);
+    const [deviceTypeTabClicked, setDeviceTypeTabClicked] = useState(true);
+    const [deviceConfigurationTabClicked, setDeviceConfigurationTabClicked] = useState(false);
+    const [deviceDataFormatTabClicked, setDeviceDataFormatTabClicked] = useState(false);
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
     const deviceName = useAppSelector(selectDeviceName);
     const deviceDescription = useAppSelector(selectDeviceDescription);
@@ -51,6 +54,10 @@ export const DeviceTypeTemplateView = () => {
     const [api, contextHolder] = notification.useNotification();
     const history = useHistory();
 
+    const deviceTypeRef = useRef<any>(undefined);
+    const deviceConfigurationRef = useRef<any>(undefined);
+    const deviceDataProtocolRef = useRef<any>(undefined);
+
     useEffect(() => {
         // console.log('inside useEffect of device type template');
         if (editFlag) {
@@ -59,6 +66,7 @@ export const DeviceTypeTemplateView = () => {
                     let deviceTypeDetail;
                     deviceTypeDetail = deviceTypeDetails[i];
                     setDeviceTypeDetail(deviceTypeDetail);
+                    if (deviceTypeRef.current) deviceTypeRef.current.loadData(deviceTypeDetail);
                     // console.log(deviceTypeDetail);
                     break;
                 }
@@ -72,6 +80,35 @@ export const DeviceTypeTemplateView = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editFlag]);
+
+    const onTabChange = (key: string) => {
+        console.log(key);
+        console.log(deviceTypeDetail);
+        if (key === '1') {
+            if (!deviceTypeTabClicked) {
+                setTimeout(() => {
+                    if (deviceTypeRef.current) deviceTypeRef.current.loadData(deviceTypeDetail);
+                }, 500);
+            }
+            setDeviceTypeTabClicked(true);
+        }
+        else if (key === '2') {
+            if (!deviceConfigurationTabClicked) {
+                setTimeout(() => {
+                    if (deviceConfigurationRef.current) deviceConfigurationRef.current.loadData(deviceTypeDetail);
+                }, 500);
+            }
+            setDeviceConfigurationTabClicked(true);
+        }
+        else if (key === '3') {
+            if (!deviceDataFormatTabClicked) {
+                setTimeout(() => {
+                    if (deviceDataProtocolRef.current) deviceDataProtocolRef.current.loadData(deviceTypeDetail);
+                }, 500);
+            }
+            setDeviceDataFormatTabClicked(true);
+        }
+    }
 
     const openNotification = (isSuccess: boolean, message: string, description: string) => {
         const placement = 'topRight';
@@ -92,6 +129,9 @@ export const DeviceTypeTemplateView = () => {
     };
 
     const onFinish = () => {
+        setDeviceTypeTabClicked(true);
+        setDeviceConfigurationTabClicked(false);
+        setDeviceDataFormatTabClicked(false);
         setSubmitLoading(true);
         try {
             if (deviceName && deviceProtocol) {
@@ -111,8 +151,8 @@ export const DeviceTypeTemplateView = () => {
                     tempDeviceTypeDetails.push(data);
                     // console.log(tempDeviceTypeDetails);
                 } else {
-                    for(let index in tempDeviceTypeDetails){
-                        if(tempDeviceTypeDetails[index].deviceTypeId === deviceTypeDetail?.deviceTypeId){
+                    for (let index in tempDeviceTypeDetails) {
+                        if (tempDeviceTypeDetails[index].deviceTypeId === deviceTypeDetail?.deviceTypeId) {
                             tempDeviceTypeDetails[index] = data;
                             break;
                         }
@@ -149,15 +189,15 @@ export const DeviceTypeTemplateView = () => {
                 </div>
             </PageHeaderAlt>
             <div className="container">
-                <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
+                <Tabs defaultActiveKey="1" style={{ marginTop: 30 }} onChange={onTabChange}>
                     <TabPane tab="Device type" key="1">
-                        <DeviceType deviceTypeDetail={deviceTypeDetail} />
+                        <DeviceType ref={deviceTypeRef} />
                     </TabPane>
                     <TabPane tab="Device configuration" key="2">
-                        <DeviceConfiguration deviceTypeDetail={deviceTypeDetail} />
+                        <DeviceConfiguration ref={deviceConfigurationRef} />
                     </TabPane>
                     <TabPane tab="Device data format" key="3">
-                        <DeviceDataFormat deviceTypeDetail={deviceTypeDetail} />
+                        <DeviceDataFormat ref={deviceDataProtocolRef} />
                     </TabPane>
                 </Tabs>
             </div>

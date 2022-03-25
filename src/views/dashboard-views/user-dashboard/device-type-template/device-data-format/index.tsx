@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { Input, Row, Col, Card, Form, Button, Switch, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -13,20 +13,21 @@ const StyledWidth = styled.div`
 const { Option } = Select;
 const dataformattypes = ['number', 'string', 'boolean']
 
-const DeviceDataFormat = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined }) => {
+const DeviceDataFormat = forwardRef((props: {}, ref) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    // console.log(selectedDeviceDataFormat);
-
-    useEffect(() => {
-        // console.log('inside useEffect of device data format');
-        if (props.deviceTypeDetail) {
-            dispatch((setDeviceDataFormat(props.deviceTypeDetail.dataformat)));
-            form.setFieldsValue({ devicedataformat: props.deviceTypeDetail.dataformat });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.deviceTypeDetail]);
+    useImperativeHandle(
+        ref,
+        () => ({
+            loadData(deviceTypeDetail: DeviceTypeTemplate) {
+                if (deviceTypeDetail) {
+                    dispatch((setDeviceDataFormat(deviceTypeDetail.dataformat)));
+                    form.setFieldsValue({ devicedataformat: deviceTypeDetail.dataformat });
+                }
+            }
+        }),
+    )
 
     const onChange = (_: undefined, values: DataFormat[]) => {
         dispatch(setDeviceDataFormat(values));
@@ -107,6 +108,6 @@ const DeviceDataFormat = (props: { deviceTypeDetail: DeviceTypeTemplate | undefi
             </Form>
         </Card>
     );
-}
+});
 
 export default DeviceDataFormat

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { Input, Row, Col, Card, Form, Button, Switch, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -13,18 +13,21 @@ const StyledWidth = styled.div`
 const { Option } = Select;
 const configurationtypes = ['number', 'string', 'boolean']
 
-const DeviceConfiguration = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined }) => {
+const DeviceConfiguration = forwardRef((props: {}, ref) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    useEffect(() => {
-        // console.log('inside useEffect of device configuration');
-        if (props.deviceTypeDetail) {
-            dispatch(setDeviceConfiguration(props.deviceTypeDetail.configuration));
-            form.setFieldsValue({ deviceconfiguration: props.deviceTypeDetail.configuration });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.deviceTypeDetail]);
+    useImperativeHandle(
+        ref,
+        () => ({
+            loadData(deviceTypeDetail: DeviceTypeTemplate) {
+                if (deviceTypeDetail) {
+                    dispatch(setDeviceConfiguration(deviceTypeDetail.configuration));
+                    form.setFieldsValue({ deviceconfiguration: deviceTypeDetail.configuration });
+                }
+            }
+        }),
+    )
 
     const onChange = (_: undefined, values: Configuration[]) => {
         dispatch(setDeviceConfiguration(values));
@@ -105,6 +108,6 @@ const DeviceConfiguration = (props: { deviceTypeDetail: DeviceTypeTemplate | und
             </Form>
         </Card>
     );
-}
+});
 
 export default DeviceConfiguration

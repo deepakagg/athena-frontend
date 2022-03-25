@@ -5,8 +5,8 @@ import Flex from "views/dashboard-views/components/Flex";
 import PageHeaderAlt from "views/dashboard-views/components/PageHeaderAlt";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { selectDeviceTypeDetails, setDeviceDetails } from "views/dashboard-views/dashboardSlice";
-import { Configuration, DataFormat, DeviceTemplate, DeviceTypeTemplate } from "views/dashboard-views/interface/Device";
+import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails } from "views/dashboard-views/dashboardSlice";
+import { Configuration, ConfigurationDevice, DataFormat, DataFormatDevice, DeviceTemplate, DeviceTypeTemplate } from "views/dashboard-views/interface/Device";
 
 const StyledHeader = styled.div`
     margin-top: 50px;
@@ -44,12 +44,17 @@ const rules = {
     ]
 }
 
+interface IFormValue {
+    [key: string]: number | string | boolean;
+}
+
 export const DeviceTemplateView = () => {
     const [api, contextHolder] = notification.useNotification();
     const [submitLoading, setSubmitLoading] = useState(false);
     const [deviceTypeConfiguration, setDeviceTypeConfiguration] = useState<Configuration[]>([]);
     const [deviceTypeDataFormat, setDeviceTypeDataFormat] = useState<DataFormat[]>([]);
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
+    const deviceDetails = useAppSelector(selectDeviceDetails);
     const history = useHistory();
     const [form] = Form.useForm();
     const dispatch = useAppDispatch();
@@ -75,45 +80,70 @@ export const DeviceTemplateView = () => {
     const onFinish = async () => {
         setSubmitLoading(true);
         try {
-            // if (deviceName && deviceProtocol) {
-            //     const deviceTypeId = uuidv4();
-            //     const data: DeviceTemplate = {
-            //         deviceTypeId,
-            //         name: deviceName as string,
-            //         description: deviceDescription as string,
-            //         protocol: deviceProtocol as string,
-            //         configuration: deviceConfiguration.filter((item) => { return item !== undefined; }),
-            //         dataformat: deviceDataFormat.filter((item) => { return item !== undefined; })
-            //     }
-            //     let tempDeviceTypeDetails: DeviceTypeTemplate[] = [];
-            //     Object.assign(tempDeviceTypeDetails, deviceDetails);
-            //     tempDeviceTypeDetails.push(data);
-            //     dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
-            //     openNotification(true, 'Successful', `Device ${deviceName} added successfully`);
-            //     history.push("/app/user-dashboard/device-type-list");
-            // } else {
-            //     openNotification(false, 'Failed', 'Failed to add device, please re check your data');
-            // }
             const values = await form.validateFields();
-            console.log(values);
+            const data = transformFinalData(values);
+            let tempDeviceDetails: DeviceTemplate[] = [];
+            Object.assign(tempDeviceDetails, deviceDetails);
+            tempDeviceDetails.push(data);
+            dispatch(setDeviceDetails(tempDeviceDetails));
+            // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
             history.push("/app/user-dashboard/device-list");
         } catch (e) {
-            console.log(e);
             openNotification(false, 'Failed', 'Failed to add device. An unexpected error occurred');
         }
         setSubmitLoading(false);
     };
 
-    const dynamicInputField = (typevalue: string) => {
-        console.log(typevalue);
-        if (typevalue === 'number') return <InputNumber className="w-100" />;
-        else if (typevalue === 'string') return <Input />;
-        else if (typevalue === 'boolean') return <StyledWidth><Switch /></StyledWidth>;
-        else return <Input />;
+    const dynamicInputField = (elm: Configuration) => {
+        if (elm.type === 'number') {
+            return (
+                <Form.Item name={`${elm.label}_configuration`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
+                    {
+                        required: elm.required,
+                        message: 'Please enter a number',
+                    }
+                ]}>
+                    <InputNumber className="w-100" />
+                </Form.Item>
+            );
+        }
+        else if (elm.type === 'string') {
+            return (
+                <Form.Item name={`${elm.label}_configuration`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
+                    {
+                        required: elm.required,
+                        message: 'Please enter a value',
+                    }
+                ]}>
+                    <Input />
+                </Form.Item>
+            );
+        }
+        else if (elm.type === 'boolean') {
+            return (
+                <Form.Item name={`${elm.label}_configuration`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
+                    {
+                        required: elm.required,
+                        message: 'Please select a state',
+                    }
+                ]} valuePropName="checked" initialValue={true}>
+                    <Switch />
+                </Form.Item>
+            );
+        }
+        else return null;
     }
 
-    const onDeviceDetailsChange = (_: undefined, data: DeviceTemplate[]) => {
-        console.log(data);
+    const transformFinalData = (data: IFormValue): DeviceTemplate => {
+        const configuration: ConfigurationDevice[] = [];
+        const dataformat: DataFormatDevice[] = [];
+        if (data) {
+            for (let item in data) {
+                if (data[item] && item.split('_')[1] === 'configuration') configuration.push({ label: item.split('_')[0], value: data[item] });
+                if (data[item] && item.split('_')[1] === 'dataformat') dataformat.push({ label: item.split('_')[0], value: data[item] });
+            }
+        }
+        return { deviceId: data['deviceId'] as string, name: data['name'] as string, devicetype: data['devicetype'] as string, description: data['description'] as string, configuration, dataformat };
     }
 
     return (
@@ -132,7 +162,7 @@ export const DeviceTemplateView = () => {
                 </div>
             </PageHeaderAlt>
             <StyledBody>
-                <Form form={form} onValuesChange={(props, values) => { onDeviceDetailsChange(props, values) }}>
+                <Form form={form}>
                     <Row gutter={16}>
                         <Col xs={24} sm={24} md={24}>
                             <Card title="Basic Info">
@@ -180,14 +210,9 @@ export const DeviceTemplateView = () => {
                                         deviceTypeConfiguration.map(elm => (
                                             <React.Fragment>
                                                 <Col key={elm.label} xs={24} sm={24} md={24}>
-                                                    <Form.Item name={elm.label} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
-                                                        {
-                                                            required: elm.required,
-                                                            message: 'Please enter a value',
-                                                        }
-                                                    ]}>
-                                                        {dynamicInputField(elm.type as string)}
-                                                    </Form.Item>
+                                                    <StyledWidth>
+                                                        {dynamicInputField(elm)}
+                                                    </StyledWidth>
                                                 </Col>
                                                 <Col span={24}>
                                                     <StyledThematicBreak />
@@ -205,14 +230,9 @@ export const DeviceTemplateView = () => {
                                         deviceTypeDataFormat.map(elm => (
                                             <React.Fragment>
                                                 <Col key={elm.label} xs={24} sm={24} md={24}>
-                                                    <Form.Item name={elm.label} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
-                                                        {
-                                                            required: elm.required,
-                                                            message: 'Please enter a value',
-                                                        }
-                                                    ]}>
-                                                        {dynamicInputField(elm.type as string)}
-                                                    </Form.Item>
+                                                    <StyledWidth>
+                                                        {dynamicInputField(elm)}
+                                                    </StyledWidth>
                                                 </Col>
                                                 <Col span={24}>
                                                     <StyledThematicBreak />

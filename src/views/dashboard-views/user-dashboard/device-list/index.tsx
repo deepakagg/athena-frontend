@@ -23,8 +23,6 @@ export const DeviceList = () => {
     const deviceDetails = useAppSelector(selectDeviceDetails);
     const history = useHistory();
 
-    console.log(deviceDetails);
-
     const tableColumns: any = [
         {
             title: 'Device id',
@@ -35,6 +33,10 @@ export const DeviceList = () => {
             dataIndex: 'name',
         },
         {
+            title: 'Device type',
+            dataIndex: 'devicetype',
+        },
+        {
             title: 'Device description',
             dataIndex: 'description',
         },
@@ -42,10 +44,10 @@ export const DeviceList = () => {
     return (
         <Card bodyStyle={{ 'padding': '0px' }}>
             <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
-					<StyledDeviceCreateButton>
-						<Button onClick={(e) => history.push("/app/user-dashboard/device-template")} type="primary" icon={<PlusCircleOutlined />} block>Create device</Button>
-					</StyledDeviceCreateButton>
-				</Flex>
+                <StyledDeviceCreateButton>
+                    <Button onClick={(e) => history.push("/app/user-dashboard/device-template")} type="primary" icon={<PlusCircleOutlined />} block>Create device</Button>
+                </StyledDeviceCreateButton>
+            </Flex>
             <div className="table-responsive">
                 {datatableLoaderState ? <Spin tip="Loading...">
                     <Table columns={tableColumns} dataSource={deviceDetails} rowKey='id' />

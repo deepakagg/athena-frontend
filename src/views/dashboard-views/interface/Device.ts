@@ -19,11 +19,21 @@ export interface DeviceTypeTemplate {
     dataformat: DataFormat[];
 }
 
+export interface ConfigurationDevice {
+    label: string;
+    value: string | number | boolean;
+}
+
+export interface DataFormatDevice {
+    label: string;
+    value: string | number | boolean;
+}
+
 export interface DeviceTemplate {
     deviceId: string;
     name: string;
+    devicetype: string;
     description: string;
-    protocol: string;
-    configuration: Configuration[];
-    dataformat: DataFormat[];
+    configuration: ConfigurationDevice[];
+    dataformat: DataFormatDevice[];
 }

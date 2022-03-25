@@ -82,8 +82,8 @@ export const DeviceTypeTemplateView = () => {
     }, [editFlag]);
 
     const onTabChange = (key: string) => {
-        console.log(key);
-        console.log(deviceTypeDetail);
+        // console.log(key);
+        // console.log(deviceTypeDetail);
         if (key === '1') {
             if (!deviceTypeTabClicked) {
                 setTimeout(() => {

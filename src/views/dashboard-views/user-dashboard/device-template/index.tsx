@@ -53,6 +53,7 @@ export const DeviceTemplateView = () => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [deviceTypeConfiguration, setDeviceTypeConfiguration] = useState<Configuration[]>([]);
     const [deviceTypeDataFormat, setDeviceTypeDataFormat] = useState<DataFormat[]>([]);
+    const [deviceDetail, setDeviceDetail] = useState<DeviceTemplate | undefined>(undefined);
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
     const deviceDetails = useAppSelector(selectDeviceDetails);
     const editFlag = useAppSelector(selectEditFlag);
@@ -62,14 +63,54 @@ export const DeviceTemplateView = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        let deviceDetail;
-        for (let i = 0; i < deviceDetails.length; i++) {
-            if (deviceDetails[i].name === selectedDevice) {
-                deviceDetail = deviceDetails[i];
-                break;
+        if (editFlag) {
+            for (let i = 0; i < deviceDetails.length; i++) {
+                if (deviceDetails[i].name === selectedDevice) {
+                    setDeviceDetail(deviceDetails[i]);
+                    const config: Configuration[] = deviceDetails[i].configuration.map((item: ConfigurationDevice) => {
+                        return {
+                            label: item.label as string,
+                            type: item.type as string,
+                            required: item.required as boolean,
+                        };
+                    })
+                    setDeviceTypeConfiguration(config);
+                    const dataformat: DataFormat[] = deviceDetails[i].dataformat.map((item: DataFormatDevice) => {
+                        return {
+                            label: item.label as string,
+                            type: item.type as string,
+                            required: item.required as boolean,
+                        };
+                    })
+                    setDeviceTypeDataFormat(dataformat);
+                    const formData = reverseTransformSavedData(deviceDetails[i]);
+                    form.setFieldsValue(formData);
+                    break;
+                }
             }
         }
-    }, [deviceDetails, selectedDevice]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editFlag]);
+
+    const reverseTransformSavedData = (data: DeviceTemplate): IFormValue => {
+        let configuration: any = {};
+        for(let index in data.configuration){
+            configuration[`${data.configuration[index].label}_configuration_${data.configuration[index].type}_${data.configuration[index].required}`] = data.configuration[index].value;
+        } 
+        let dataformat: any = {};
+        for(let index in data.dataformat){
+            dataformat[`${data.dataformat[index].label}_dataformat_${data.dataformat[index].type}_${data.dataformat[index].required}`] = data.dataformat[index].value;
+        }
+        const formData: IFormValue = {
+            deviceId: data.deviceId,
+            name: data.name,
+            devicetype: data.devicetype,
+            description: data.description,
+            ...configuration,
+            ...dataformat,
+        };
+        return formData;
+    }
 
     const openNotification = (isSuccess: boolean, message: string, description: string) => {
         const placement = 'topRight';
@@ -96,20 +137,31 @@ export const DeviceTemplateView = () => {
             const data = transformFinalData(values);
             let tempDeviceDetails: DeviceTemplate[] = [];
             Object.assign(tempDeviceDetails, deviceDetails);
-            tempDeviceDetails.push(data);
+            if (!editFlag) {
+                tempDeviceDetails.push(data);
+                // console.log(tempDeviceTypeDetails);
+            } else {
+                for (let index in tempDeviceDetails) {
+                    if (tempDeviceDetails[index].deviceId === deviceDetail?.deviceId) {
+                        tempDeviceDetails[index] = data;
+                        break;
+                    }
+                }
+                // console.log(tempDeviceTypeDetails);
+            }
             dispatch(setDeviceDetails(tempDeviceDetails));
             // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
             history.push("/app/user-dashboard/device-list");
         } catch (e) {
-            openNotification(false, 'Failed', 'Failed to add device. An unexpected error occurred');
+            openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device. An unexpected error occurred`);
         }
         setSubmitLoading(false);
     };
 
-    const dynamicInputField = (elm: Configuration) => {
+    const dynamicInputField = (elm: Configuration | DataFormat, type: string) => {
         if (elm.type === 'number') {
             return (
-                <Form.Item name={`${elm.label}_configuration`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
+                <Form.Item name={`${elm.label}_${type}_${elm.type}_${elm.required}`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
                     {
                         required: elm.required,
                         message: 'Please enter a number',
@@ -121,7 +173,7 @@ export const DeviceTemplateView = () => {
         }
         else if (elm.type === 'string') {
             return (
-                <Form.Item name={`${elm.label}_configuration`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
+                <Form.Item name={`${elm.label}_${type}_${elm.type}_${elm.required}`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
                     {
                         required: elm.required,
                         message: 'Please enter a value',
@@ -133,7 +185,7 @@ export const DeviceTemplateView = () => {
         }
         else if (elm.type === 'boolean') {
             return (
-                <Form.Item name={`${elm.label}_configuration`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
+                <Form.Item name={`${elm.label}_${type}_${elm.type}_${elm.required}`} fieldKey={elm.label} label={`${elm.label} (${elm.type})`} rules={[
                     {
                         required: elm.required,
                         message: 'Please select a state',
@@ -151,8 +203,9 @@ export const DeviceTemplateView = () => {
         const dataformat: DataFormatDevice[] = [];
         if (data) {
             for (let item in data) {
-                if (data[item] && item.split('_')[1] === 'configuration') configuration.push({ label: item.split('_')[0], value: data[item] });
-                if (data[item] && item.split('_')[1] === 'dataformat') dataformat.push({ label: item.split('_')[0], value: data[item] });
+                const tempArray = item.split('_');
+                if (data[item] !== undefined && tempArray[1] === 'configuration') configuration.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
+                if (data[item] !== undefined && tempArray[1] === 'dataformat') dataformat.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
             }
         }
         return { deviceId: data['deviceId'] as string, name: data['name'] as string, devicetype: data['devicetype'] as string, description: data['description'] as string, configuration, dataformat };
@@ -224,7 +277,7 @@ export const DeviceTemplateView = () => {
                                             <React.Fragment>
                                                 <Col key={elm.label} xs={24} sm={24} md={24}>
                                                     <StyledWidth>
-                                                        {dynamicInputField(elm)}
+                                                        {dynamicInputField(elm, 'configuration')}
                                                     </StyledWidth>
                                                 </Col>
                                                 <Col span={24}>
@@ -244,7 +297,7 @@ export const DeviceTemplateView = () => {
                                             <React.Fragment>
                                                 <Col key={elm.label} xs={24} sm={24} md={24}>
                                                     <StyledWidth>
-                                                        {dynamicInputField(elm)}
+                                                        {dynamicInputField(elm, 'dataformat')}
                                                     </StyledWidth>
                                                 </Col>
                                                 <Col span={24}>

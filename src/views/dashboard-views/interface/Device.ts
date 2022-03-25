@@ -22,11 +22,15 @@ export interface DeviceTypeTemplate {
 export interface ConfigurationDevice {
     label: string;
     value: string | number | boolean;
+    type?: string;
+    required?: boolean;
 }
 
 export interface DataFormatDevice {
     label: string;
     value: string | number | boolean;
+    type?: string;
+    required?: boolean;
 }
 
 export interface DeviceTemplate {

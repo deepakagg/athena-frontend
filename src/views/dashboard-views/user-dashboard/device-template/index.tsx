@@ -1,11 +1,11 @@
 import { Button, Card, Col, Form, Input, InputNumber, notification, Row, Select, Switch } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Flex from "views/dashboard-views/components/Flex";
 import PageHeaderAlt from "views/dashboard-views/components/PageHeaderAlt";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails } from "views/dashboard-views/dashboardSlice";
+import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails, selectEditFlag, selectDevice } from "views/dashboard-views/dashboardSlice";
 import { Configuration, ConfigurationDevice, DataFormat, DataFormatDevice, DeviceTemplate, DeviceTypeTemplate } from "views/dashboard-views/interface/Device";
 
 const StyledHeader = styled.div`
@@ -55,9 +55,21 @@ export const DeviceTemplateView = () => {
     const [deviceTypeDataFormat, setDeviceTypeDataFormat] = useState<DataFormat[]>([]);
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
     const deviceDetails = useAppSelector(selectDeviceDetails);
+    const editFlag = useAppSelector(selectEditFlag);
+    const selectedDevice = useAppSelector(selectDevice);
     const history = useHistory();
     const [form] = Form.useForm();
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        let deviceDetail;
+        for (let i = 0; i < deviceDetails.length; i++) {
+            if (deviceDetails[i].name === selectedDevice) {
+                deviceDetail = deviceDetails[i];
+                break;
+            }
+        }
+    }, [deviceDetails, selectedDevice]);
 
     const openNotification = (isSuccess: boolean, message: string, description: string) => {
         const placement = 'topRight';
@@ -152,10 +164,11 @@ export const DeviceTemplateView = () => {
             <PageHeaderAlt className="border-bottom" overlap>
                 <div className="container">
                     <Flex className="py-2" mobileFlex={false} justifyContent="between" alignItems="center">
-                        <h2 className="mb-3">{'Add New Device'} </h2>
+                        <h2 className="mb-3">{!editFlag ? 'Add New Device' : 'Edit Device'} </h2>
                         <div className="mb-3">
+                            {editFlag ? <StyledButton className="mr-2" onClick={() => history.push("/app/user-dashboard/device-list")}>Discard</StyledButton> : null}
                             <StyledButton type="primary" onClick={() => onFinish()} htmlType="submit" loading={submitLoading} >
-                                ADD
+                                {editFlag ? 'SAVE' : 'ADD'}
                             </StyledButton>
                         </div>
                     </Flex>

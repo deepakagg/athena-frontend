@@ -15,6 +15,9 @@ export interface DashboardState {
     deviceConfiguration: Configuration[];
     deviceDataFormat: DataFormat[];
     deviceDetails: DeviceTemplate[];
+    editFlag: boolean;
+    selectedDeviceType: string | undefined;
+    selectedDevice: string | undefined;
 }
 
 const initialState: DashboardState = {
@@ -30,6 +33,9 @@ const initialState: DashboardState = {
     deviceConfiguration: [],
     deviceDataFormat: [],
     deviceDetails: [],
+    editFlag: false,
+    selectedDeviceType: undefined,
+    selectedDevice: undefined,
 };
 
 export const dashboardSlice = createSlice({
@@ -72,10 +78,19 @@ export const dashboardSlice = createSlice({
         setDeviceDetails: (state, action: PayloadAction<DeviceTemplate[]>) => {
             state.deviceDetails = action.payload;
         },
+        setEditFlag: (state, action: PayloadAction<boolean>) => {
+            state.editFlag = action.payload;
+        },
+        setSelectedDeviceType: (state, action: PayloadAction<string | undefined>) => {
+            state.selectedDeviceType = action.payload;
+        },
+        setSelectedDevice: (state, action: PayloadAction<string | undefined>) => {
+            state.selectedDevice = action.payload;
+        },
     },
 });
 
-export const { updateUserList, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails } = dashboardSlice.actions;
+export const { updateUserList, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails, setEditFlag, setSelectedDeviceType, setSelectedDevice } = dashboardSlice.actions;
 
 export const selectUserList = (state: RootState) => state.dashboard.userlist;
 export const selectAuditList = (state: RootState) => state.dashboard.auditList;
@@ -89,5 +104,8 @@ export const selectDeviceProtocol = (state: RootState) => state.dashboard.device
 export const selectDeviceConfiguration = (state: RootState) => state.dashboard.deviceConfiguration;
 export const selectDeviceDataFormat = (state: RootState) => state.dashboard.deviceDataFormat;
 export const selectDeviceDetails = (state: RootState) => state.dashboard.deviceDetails;
+export const selectEditFlag = (state: RootState) => state.dashboard.editFlag;
+export const selectDeviceType = (state: RootState) => state.dashboard.selectedDeviceType;
+export const selectDevice = (state: RootState) => state.dashboard.selectedDevice;
 
 export default dashboardSlice.reducer;

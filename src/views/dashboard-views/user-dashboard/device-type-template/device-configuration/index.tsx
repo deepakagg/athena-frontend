@@ -1,21 +1,30 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input, Row, Col, Card, Form, Button, Switch, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
 import { setDeviceConfiguration } from 'views/dashboard-views/dashboardSlice';
-import { Configuration } from 'views/dashboard-views/interface/Device';
+import { Configuration, DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledWidth = styled.div`
     width: fit-content;
 `;
 
 const { Option } = Select;
-const datafarmattypes = ['number', 'string', 'boolean']
+const configurationtypes = ['number', 'string', 'boolean']
 
-const DeviceConfiguration = () => {
+const DeviceConfiguration = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined }) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        // console.log('inside useEffect of device configuration');
+        if (props.deviceTypeDetail) {
+            dispatch(setDeviceConfiguration(props.deviceTypeDetail.configuration));
+            form.setFieldsValue({ deviceconfiguration: props.deviceTypeDetail.configuration });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.deviceTypeDetail]);
 
     const onChange = (_: undefined, values: Configuration[]) => {
         dispatch(setDeviceConfiguration(values));
@@ -25,7 +34,7 @@ const DeviceConfiguration = () => {
         <Card>
             <StyledWidth><h2>Device configuration</h2></StyledWidth>
             <StyledWidth><p>Add device configuration</p></StyledWidth>
-            <Form name="deviceconfiguration" layout="vertical" form={form} onValuesChange={(props, values) => { onChange(props, values.deviceconfiguration); }}>
+            <Form name="deviceconfigurationcontainer" layout="vertical" form={form} onValuesChange={(props, values) => { onChange(props, values.deviceconfiguration); }}>
                 <Form.List name="deviceconfiguration">
                     {(fields, { add, remove }) => {
                         return (
@@ -55,7 +64,7 @@ const DeviceConfiguration = () => {
                                             >
                                                 <Select className="w-100" placeholder="Type">
                                                     {
-                                                        datafarmattypes.map(elm => (
+                                                        configurationtypes.map(elm => (
                                                             <Option key={elm} value={elm}>{elm}</Option>
                                                         ))
                                                     }
@@ -70,6 +79,7 @@ const DeviceConfiguration = () => {
                                                     name={[field.name, 'required']}
                                                     fieldKey={[field.key, 'required']}
                                                     className="w-100"
+                                                    valuePropName="checked"
                                                 >
                                                     <Switch />
                                                 </Form.Item>

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input, Row, Col, Card, Form, Select } from 'antd';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
 import { setDeviceName, setDeviceProtocol, setDeviceDescription } from '../../../dashboardSlice';
+import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledWidth = styled.div`
     width: fit-content;
@@ -11,14 +12,27 @@ const StyledWidth = styled.div`
 const { Option } = Select;
 const channels = ['MQTT', 'HTTP', 'LoRaWAN']
 
-const DeviceType = () => {
+const DeviceType = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined }) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    const onChange = (_: undefined, values: { name: string, description: string, channel: string }) => {
+    useEffect(() => {
+        // console.log('inside useEffect of device type');
+        if (props.deviceTypeDetail) {
+            // console.log(props.deviceTypeDetail);
+            dispatch(setDeviceName(props.deviceTypeDetail.name));
+            dispatch(setDeviceDescription(props.deviceTypeDetail.description));
+            dispatch(setDeviceProtocol(props.deviceTypeDetail.protocol));
+            form.setFieldsValue({ name: props.deviceTypeDetail.name, description: props.deviceTypeDetail.description, protocol: props.deviceTypeDetail.protocol });
+        }
+        // setTimeout(() => {}, 5000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.deviceTypeDetail]);
+
+    const onChange = (_: undefined, values: { name: string, description: string, protocol: string }) => {
         dispatch(setDeviceName(values.name));
         dispatch(setDeviceDescription(values.description));
-        dispatch(setDeviceProtocol(values.channel));
+        dispatch(setDeviceProtocol(values.protocol));
     }
 
     return (
@@ -52,8 +66,8 @@ const DeviceType = () => {
                     <Col sm={24} md={7}>
                         <Form.Item
                             label="Channel"
-                            name={'channel'}
-                            fieldKey={'channel'}
+                            name={'protocol'}
+                            fieldKey={'protocol'}
                             rules={[{ required: true, message: 'Please select a channel' }]}
                             className="w-100"
                         >

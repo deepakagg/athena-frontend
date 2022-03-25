@@ -1,21 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input, Row, Col, Card, Form, Button, Switch, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
 import { setDeviceDataFormat } from 'views/dashboard-views/dashboardSlice';
-import { DataFormat } from 'views/dashboard-views/interface/Device';
+import { DataFormat, DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledWidth = styled.div`
     width: fit-content;
 `
 
 const { Option } = Select;
-const configurationtypes = ['number', 'string', 'boolean']
+const dataformattypes = ['number', 'string', 'boolean']
 
-const DeviceDataFormat = () => {
+const DeviceDataFormat = (props: { deviceTypeDetail: DeviceTypeTemplate | undefined }) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
+
+    // console.log(selectedDeviceDataFormat);
+
+    useEffect(() => {
+        // console.log('inside useEffect of device data format');
+        if (props.deviceTypeDetail) {
+            dispatch((setDeviceDataFormat(props.deviceTypeDetail.dataformat)));
+            form.setFieldsValue({ devicedataformat: props.deviceTypeDetail.dataformat });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.deviceTypeDetail]);
 
     const onChange = (_: undefined, values: DataFormat[]) => {
         dispatch(setDeviceDataFormat(values));
@@ -25,7 +36,7 @@ const DeviceDataFormat = () => {
         <Card>
             <StyledWidth><h2>Device data format</h2></StyledWidth>
             <StyledWidth><p>Add device data format</p></StyledWidth>
-            <Form name="devicedataformat" layout="vertical" form={form} onValuesChange={(props, values) => { onChange(props, values.devicedataformat); }}>
+            <Form name="devicedataformatcontainer" layout="vertical" form={form} onValuesChange={(props, values) => { onChange(props, values.devicedataformat); }}>
                 <Form.List name="devicedataformat">
                     {(fields, { add, remove }) => {
                         return (
@@ -55,7 +66,7 @@ const DeviceDataFormat = () => {
                                             >
                                                 <Select className="w-100" placeholder="Type">
                                                     {
-                                                        configurationtypes.map(elm => (
+                                                        dataformattypes.map(elm => (
                                                             <Option key={elm} value={elm}>{elm}</Option>
                                                         ))
                                                     }
@@ -70,6 +81,7 @@ const DeviceDataFormat = () => {
                                                     name={[field.name, 'required']}
                                                     fieldKey={[field.key, 'required']}
                                                     className="w-100"
+                                                    valuePropName="checked"
                                                 >
                                                     <Switch />
                                                 </Form.Item>

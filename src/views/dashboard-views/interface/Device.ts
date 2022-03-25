@@ -11,7 +11,7 @@ export interface DataFormat {
 }
 
 export interface DeviceTypeTemplate {
-    deviceTypeId: string;
+    id: string;
     name: string;
     description?: string;
     protocol?: string;
@@ -34,7 +34,7 @@ export interface DataFormatDevice {
 }
 
 export interface DeviceTemplate {
-    deviceId: string;
+    id: string;
     name: string;
     devicetype: string;
     description: string;

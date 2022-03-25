@@ -102,7 +102,7 @@ export const DeviceTemplateView = () => {
             dataformat[`${data.dataformat[index].label}_dataformat_${data.dataformat[index].type}_${data.dataformat[index].required}`] = data.dataformat[index].value;
         }
         const formData: IFormValue = {
-            deviceId: data.deviceId,
+            deviceId: data.id,
             name: data.name,
             devicetype: data.devicetype,
             description: data.description,
@@ -142,7 +142,7 @@ export const DeviceTemplateView = () => {
                 // console.log(tempDeviceTypeDetails);
             } else {
                 for (let index in tempDeviceDetails) {
-                    if (tempDeviceDetails[index].deviceId === deviceDetail?.deviceId) {
+                    if (tempDeviceDetails[index].id === deviceDetail?.id) {
                         tempDeviceDetails[index] = data;
                         break;
                     }
@@ -151,7 +151,9 @@ export const DeviceTemplateView = () => {
             }
             dispatch(setDeviceDetails(tempDeviceDetails));
             // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
-            history.push("/app/user-dashboard/device-list");
+            setTimeout(() => {
+                history.push("/app/user-dashboard/device-list");
+            }, 100);
         } catch (e) {
             openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device. An unexpected error occurred`);
         }
@@ -208,7 +210,7 @@ export const DeviceTemplateView = () => {
                 if (data[item] !== undefined && tempArray[1] === 'dataformat') dataformat.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
             }
         }
-        return { deviceId: data['deviceId'] as string, name: data['name'] as string, devicetype: data['devicetype'] as string, description: data['description'] as string, configuration, dataformat };
+        return { id: data['deviceId'] as string, name: data['name'] as string, devicetype: data['devicetype'] as string, description: data['description'] as string, configuration, dataformat };
     }
 
     return (
@@ -274,8 +276,8 @@ export const DeviceTemplateView = () => {
                                 <Row gutter={16}>
                                     {
                                         deviceTypeConfiguration.map(elm => (
-                                            <React.Fragment>
-                                                <Col key={elm.label} xs={24} sm={24} md={24}>
+                                            <React.Fragment key={`${elm.label}`}>
+                                                <Col xs={24} sm={24} md={24}>
                                                     <StyledWidth>
                                                         {dynamicInputField(elm, 'configuration')}
                                                     </StyledWidth>
@@ -294,8 +296,8 @@ export const DeviceTemplateView = () => {
                                 <Row gutter={16}>
                                     {
                                         deviceTypeDataFormat.map(elm => (
-                                            <React.Fragment>
-                                                <Col key={elm.label} xs={24} sm={24} md={24}>
+                                            <React.Fragment key={`${elm.label}`}>
+                                                <Col xs={24} sm={24} md={24}>
                                                     <StyledWidth>
                                                         {dynamicInputField(elm, 'dataformat')}
                                                     </StyledWidth>

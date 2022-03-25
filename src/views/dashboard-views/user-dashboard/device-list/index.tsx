@@ -31,7 +31,7 @@ export const DeviceList = () => {
     const tableColumns: any = [
         {
             title: 'Device id',
-            dataIndex: 'deviceId',
+            dataIndex: 'id',
         },
         {
             title: 'Device name',

@@ -135,9 +135,9 @@ export const DeviceTypeTemplateView = () => {
         setSubmitLoading(true);
         try {
             if (deviceName && deviceProtocol) {
-                const deviceTypeId = editFlag ? deviceTypeDetail?.deviceTypeId as string : uuidv4();
+                const deviceTypeId = editFlag ? deviceTypeDetail?.id as string : uuidv4();
                 const data: DeviceTypeTemplate = {
-                    deviceTypeId,
+                    id: deviceTypeId,
                     name: deviceName as string,
                     description: deviceDescription as string,
                     protocol: deviceProtocol as string,
@@ -152,7 +152,7 @@ export const DeviceTypeTemplateView = () => {
                     // console.log(tempDeviceTypeDetails);
                 } else {
                     for (let index in tempDeviceTypeDetails) {
-                        if (tempDeviceTypeDetails[index].deviceTypeId === deviceTypeDetail?.deviceTypeId) {
+                        if (tempDeviceTypeDetails[index].id === deviceTypeDetail?.id) {
                             tempDeviceTypeDetails[index] = data;
                             break;
                         }

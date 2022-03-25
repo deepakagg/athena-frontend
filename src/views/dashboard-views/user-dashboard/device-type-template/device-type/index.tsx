@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Input, Row, Col, Card, Form, Select } from 'antd';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
-import { setDeviceName, setDeviceProtocol } from '../../../dashboardSlice';
+import { setDeviceName, setDeviceProtocol, setDeviceDescription } from '../../../dashboardSlice';
+import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledWidth = styled.div`
     width: fit-content;
@@ -11,13 +12,29 @@ const StyledWidth = styled.div`
 const { Option } = Select;
 const channels = ['MQTT', 'HTTP', 'LoRaWAN']
 
-const DeviceType = () => {
+const DeviceType = forwardRef((props: {}, ref) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    const onChange = (_: undefined, values: { name: string, channel: string }) => {
+    useImperativeHandle(
+        ref,
+        () => ({
+            loadData(deviceTypeDetail: DeviceTypeTemplate) {
+                if (deviceTypeDetail) {
+                    // console.log(props.deviceTypeDetail);
+                    dispatch(setDeviceName(deviceTypeDetail.name));
+                    dispatch(setDeviceDescription(deviceTypeDetail.description));
+                    dispatch(setDeviceProtocol(deviceTypeDetail.protocol));
+                    form.setFieldsValue({ name: deviceTypeDetail.name, description: deviceTypeDetail.description, protocol: deviceTypeDetail.protocol });
+                }
+            }
+        }),
+    )
+
+    const onChange = (_: undefined, values: { name: string, description: string, protocol: string }) => {
         dispatch(setDeviceName(values.name));
-        dispatch(setDeviceProtocol(values.channel));
+        dispatch(setDeviceDescription(values.description));
+        dispatch(setDeviceProtocol(values.protocol));
     }
 
     return (
@@ -39,9 +56,20 @@ const DeviceType = () => {
                     </Col>
                     <Col sm={24} md={7}>
                         <Form.Item
+                            label="Description"
+                            name={'description'}
+                            fieldKey={'description'}
+                            rules={[{ required: true, message: 'Please enter a description' }]}
+                            className="w-100"
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Col>
+                    <Col sm={24} md={7}>
+                        <Form.Item
                             label="Channel"
-                            name={'channel'}
-                            fieldKey={'channel'}
+                            name={'protocol'}
+                            fieldKey={'protocol'}
                             rules={[{ required: true, message: 'Please select a channel' }]}
                             className="w-100"
                         >
@@ -58,6 +86,6 @@ const DeviceType = () => {
             </Form>
         </Card>
     );
-}
+})
 
 export default DeviceType

@@ -1,19 +1,33 @@
-import React from 'react'
-import { Input, Row, Col, Card, Form, Button, Switch } from 'antd';
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react'
+import { Input, Row, Col, Card, Form, Button, Switch, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useAppDispatch } from 'app/hooks';
 import { setDeviceConfiguration } from 'views/dashboard-views/dashboardSlice';
-import { Configuration } from 'views/dashboard-views/interface/Device';
+import { Configuration, DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledWidth = styled.div`
     width: fit-content;
 `;
 
+const { Option } = Select;
+const configurationtypes = ['number', 'string', 'boolean']
 
-const DeviceConfiguration = () => {
+const DeviceConfiguration = forwardRef((props: {}, ref) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
+
+    useImperativeHandle(
+        ref,
+        () => ({
+            loadData(deviceTypeDetail: DeviceTypeTemplate) {
+                if (deviceTypeDetail) {
+                    dispatch(setDeviceConfiguration(deviceTypeDetail.configuration));
+                    form.setFieldsValue({ deviceconfiguration: deviceTypeDetail.configuration });
+                }
+            }
+        }),
+    )
 
     const onChange = (_: undefined, values: Configuration[]) => {
         dispatch(setDeviceConfiguration(values));
@@ -23,7 +37,7 @@ const DeviceConfiguration = () => {
         <Card>
             <StyledWidth><h2>Device configuration</h2></StyledWidth>
             <StyledWidth><p>Add device configuration</p></StyledWidth>
-            <Form name="deviceconfiguration" layout="vertical" form={form} onValuesChange={(props, values) => { onChange(props, values.deviceconfiguration); }}>
+            <Form name="deviceconfigurationcontainer" layout="vertical" form={form} onValuesChange={(props, values) => { onChange(props, values.deviceconfiguration); }}>
                 <Form.List name="deviceconfiguration">
                     {(fields, { add, remove }) => {
                         return (
@@ -48,10 +62,16 @@ const DeviceConfiguration = () => {
                                                 label="Type"
                                                 name={[field.name, 'type']}
                                                 fieldKey={[field.key, 'type']}
-                                                rules={[{ required: true, message: 'Please enter type' }]}
+                                                rules={[{ required: true, message: 'Please select type' }]}
                                                 className="w-100"
                                             >
-                                                <Input />
+                                                <Select className="w-100" placeholder="Type">
+                                                    {
+                                                        configurationtypes.map(elm => (
+                                                            <Option key={elm} value={elm}>{elm}</Option>
+                                                        ))
+                                                    }
+                                                </Select>
                                             </Form.Item>
                                         </Col>
                                         <Col sm={24} md={7}>
@@ -62,6 +82,7 @@ const DeviceConfiguration = () => {
                                                     name={[field.name, 'required']}
                                                     fieldKey={[field.key, 'required']}
                                                     className="w-100"
+                                                    valuePropName="checked"
                                                 >
                                                     <Switch />
                                                 </Form.Item>
@@ -87,6 +108,6 @@ const DeviceConfiguration = () => {
             </Form>
         </Card>
     );
-}
+});
 
 export default DeviceConfiguration

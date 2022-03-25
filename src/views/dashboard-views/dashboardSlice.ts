@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { Configuration, DataFormat, Device } from '../dashboard-views/interface/Device';
+import { Configuration, DataFormat, DeviceTypeTemplate, DeviceTemplate } from '../dashboard-views/interface/Device';
 
 export interface DashboardState {
     userlist: any[];
@@ -8,11 +8,16 @@ export interface DashboardState {
     isOpenCreateUserModal: boolean;
     isOpenUpdateUserModal: boolean;
     userId: string | undefined;
-    deviceDetails: Device[];
+    deviceTypeDetails: DeviceTypeTemplate[];
     deviceName: string | undefined;
+    deviceDescription: string | undefined;
     deviceProtocol: string | undefined;
     deviceConfiguration: Configuration[];
     deviceDataFormat: DataFormat[];
+    deviceDetails: DeviceTemplate[];
+    editFlag: boolean;
+    selectedDeviceType: string | undefined;
+    selectedDevice: string | undefined;
 }
 
 const initialState: DashboardState = {
@@ -21,11 +26,16 @@ const initialState: DashboardState = {
     isOpenCreateUserModal: false,
     isOpenUpdateUserModal: false,
     userId: undefined,
-    deviceDetails: [],
+    deviceTypeDetails: [],
     deviceName: undefined,
+    deviceDescription: undefined,
     deviceProtocol: undefined,
     deviceConfiguration: [],
     deviceDataFormat: [],
+    deviceDetails: [],
+    editFlag: false,
+    selectedDeviceType: undefined,
+    selectedDevice: undefined,
 };
 
 export const dashboardSlice = createSlice({
@@ -47,11 +57,14 @@ export const dashboardSlice = createSlice({
         setUserIdState: (state, action: PayloadAction<string>) => {
             state.userId = action.payload;
         },
-        setDeviceDetails: (state, action: PayloadAction<Device[]>) => {
-            state.deviceDetails = action.payload;
+        setDeviceTypeDetails: (state, action: PayloadAction<DeviceTypeTemplate[]>) => {
+            state.deviceTypeDetails = action.payload;
         },
         setDeviceName: (state, action: PayloadAction<string | undefined>) => {
             state.deviceName = action.payload;
+        },
+        setDeviceDescription: (state, action: PayloadAction<string | undefined>) => {
+            state.deviceDescription = action.payload;
         },
         setDeviceProtocol: (state, action: PayloadAction<string | undefined>) => {
             state.deviceProtocol = action.payload;
@@ -62,20 +75,37 @@ export const dashboardSlice = createSlice({
         setDeviceDataFormat: (state, action: PayloadAction<DataFormat[]>) => {
             state.deviceDataFormat = action.payload;
         },
+        setDeviceDetails: (state, action: PayloadAction<DeviceTemplate[]>) => {
+            state.deviceDetails = action.payload;
+        },
+        setEditFlag: (state, action: PayloadAction<boolean>) => {
+            state.editFlag = action.payload;
+        },
+        setSelectedDeviceType: (state, action: PayloadAction<string | undefined>) => {
+            state.selectedDeviceType = action.payload;
+        },
+        setSelectedDevice: (state, action: PayloadAction<string | undefined>) => {
+            state.selectedDevice = action.payload;
+        },
     },
 });
 
-export const { updateUserList, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceDetails, setDeviceName, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat } = dashboardSlice.actions;
+export const { updateUserList, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails, setEditFlag, setSelectedDeviceType, setSelectedDevice } = dashboardSlice.actions;
 
 export const selectUserList = (state: RootState) => state.dashboard.userlist;
 export const selectAuditList = (state: RootState) => state.dashboard.auditList;
 export const selectCreateUserModalViewState = (state: RootState) => state.dashboard.isOpenCreateUserModal;
 export const selectUpdateUserModalViewState = (state: RootState) => state.dashboard.isOpenUpdateUserModal;
 export const selectUserId = (state: RootState) => state.dashboard.userId;
-export const selectDeviceDetails = (state: RootState) => state.dashboard.deviceDetails;
+export const selectDeviceTypeDetails = (state: RootState) => state.dashboard.deviceTypeDetails;
 export const selectDeviceName = (state: RootState) => state.dashboard.deviceName;
+export const selectDeviceDescription = (state: RootState) => state.dashboard.deviceDescription;
 export const selectDeviceProtocol = (state: RootState) => state.dashboard.deviceProtocol;
 export const selectDeviceConfiguration = (state: RootState) => state.dashboard.deviceConfiguration;
 export const selectDeviceDataFormat = (state: RootState) => state.dashboard.deviceDataFormat;
+export const selectDeviceDetails = (state: RootState) => state.dashboard.deviceDetails;
+export const selectEditFlag = (state: RootState) => state.dashboard.editFlag;
+export const selectDeviceType = (state: RootState) => state.dashboard.selectedDeviceType;
+export const selectDevice = (state: RootState) => state.dashboard.selectedDevice;
 
 export default dashboardSlice.reducer;

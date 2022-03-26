@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Card, Popconfirm, Spin, Table, Tooltip } from 'antd';
 import {
-    selectDeviceDetails, setEditFlag, setSelectedDevice,
+    selectDeviceDetails, setDeviceDetails, setEditFlag, setSelectedDevice,
 } from '../../dashboardSlice';
 // import ReactJson from 'react-json-view';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -10,6 +10,7 @@ import Flex from 'views/dashboard-views/components/Flex';
 import styled from 'styled-components';
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
+import { DeviceTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledDeviceCreateButton = styled.div`
     margin-left: auto; 
@@ -27,6 +28,23 @@ export const DeviceList = () => {
     const deviceDetails = useAppSelector(selectDeviceDetails);
     const history = useHistory();
     const dispatch = useAppDispatch();
+
+    const removeById = (arr: any[], id: string) => {
+        const requiredIndex = arr.findIndex(el => {
+            return el.id === id;
+        });
+        if (requiredIndex === -1) {
+            return false;
+        };
+        return !!arr.splice(requiredIndex, 1);
+    };
+
+    const onDelete = (id: string) => {
+        let tempDeviceDetails: DeviceTemplate[] = [];
+        Object.assign(tempDeviceDetails, deviceDetails);
+        removeById(tempDeviceDetails, id);
+        dispatch(setDeviceDetails(tempDeviceDetails));
+    }
 
     const tableColumns: any = [
         {
@@ -48,7 +66,7 @@ export const DeviceList = () => {
         {
             title: '',
             dataIndex: 'actions',
-            render: (_: any, elm: { name: string }) => (
+            render: (_: any, elm: { name: string, id: string }) => (
                 <div className="text-right d-flex justify-content-end">
                     {/* <SpacedActionItem>
                         <Tooltip title="View">
@@ -60,13 +78,13 @@ export const DeviceList = () => {
                             <Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setSelectedDevice(elm.name)); dispatch(setEditFlag(true)); history.push("/app/user-dashboard/device-template"); }} size="small" />
                         </Tooltip>
                     </SpacedActionItem>
-                    {/* <SpacedActionItem>
+                    <SpacedActionItem>
                         <Tooltip title="Delete">
-                            <Popconfirm placement="left" title={`Confirm delete device?`} onConfirm={() => { }} okText="Yes" cancelText="No">
+                            <Popconfirm placement="left" title={`Confirm delete device?`} onConfirm={() => { onDelete(elm.id); }} okText="Yes" cancelText="No">
                                 <Button danger icon={<DeleteOutlined />} size="small" />
                             </Popconfirm>
                         </Tooltip>
-                    </SpacedActionItem> */}
+                    </SpacedActionItem>
                 </div>
             )
         },

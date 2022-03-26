@@ -4,6 +4,7 @@ import {
     setSelectedDeviceType,
     selectDeviceTypeDetails,
     setEditFlag,
+    setDeviceTypeDetails,
 } from '../../dashboardSlice';
 // import ReactJson from 'react-json-view';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -12,6 +13,7 @@ import Flex from 'views/dashboard-views/components/Flex';
 import styled from 'styled-components';
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
+import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 
 const StyledDeviceTypeCreateButton = styled.div`
     margin-left: auto; 
@@ -30,6 +32,23 @@ export const DeviceTypeList = () => {
     const history = useHistory();
     const dispatch = useAppDispatch();
 
+    const removeById = (arr: any[], id: string) => {
+        const requiredIndex = arr.findIndex(el => {
+            return el.id === id;
+        });
+        if (requiredIndex === -1) {
+            return false;
+        };
+        return !!arr.splice(requiredIndex, 1);
+    };
+
+    const onDelete = (id: string) => {
+        let tempDeviceTypeDetails: DeviceTypeTemplate[] = [];
+        Object.assign(tempDeviceTypeDetails, deviceTypeDetails);
+        removeById(tempDeviceTypeDetails, id);
+        dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
+    }
+
     const tableColumns: any = [
         {
             title: 'Device name',
@@ -46,7 +65,7 @@ export const DeviceTypeList = () => {
         {
             title: '',
             dataIndex: 'actions',
-            render: (_: any, elm: { name: string }) => (
+            render: (_: any, elm: { name: string, id: string }) => (
                 <div className="text-right d-flex justify-content-end">
                     {/* <SpacedActionItem>
                         <Tooltip title="View">
@@ -58,13 +77,13 @@ export const DeviceTypeList = () => {
                             <Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setSelectedDeviceType(elm.name)); dispatch(setEditFlag(true)); history.push("/app/user-dashboard/device-type-template"); }} size="small" />
                         </Tooltip>
                     </SpacedActionItem>
-                    {/* <SpacedActionItem>
+                    <SpacedActionItem>
                         <Tooltip title="Delete">
-                            <Popconfirm placement="left" title={`Confirm delete device type?`} onConfirm={() => { }} okText="Yes" cancelText="No">
+                            <Popconfirm placement="left" title={`Confirm delete device type?`} onConfirm={() => { onDelete(elm.id); }} okText="Yes" cancelText="No">
                                 <Button danger icon={<DeleteOutlined />} size="small" />
                             </Popconfirm>
                         </Tooltip>
-                    </SpacedActionItem> */}
+                    </SpacedActionItem>
                 </div>
             )
         },

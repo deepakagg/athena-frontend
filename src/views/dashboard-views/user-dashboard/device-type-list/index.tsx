@@ -14,6 +14,7 @@ import styled from 'styled-components';
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
+import DeviceTypeView from './device-type-view';
 
 const StyledDeviceTypeCreateButton = styled.div`
     margin-left: auto; 
@@ -28,9 +29,21 @@ const SpacedActionItem = styled.div`
 
 export const DeviceTypeList = () => {
     const [datatableLoaderState, setDatatableLoaderState] = useState(false);
+    const [deviceTypeProfileVisible, setDeviceTypeProfileVisible] = useState(false);
+    const [selectDeviceType, setSelectDeviceType] = useState(null);
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
     const history = useHistory();
     const dispatch = useAppDispatch();
+
+    const showDeviceTypeProfile = (deviceTypeInfo: any) => {
+		setDeviceTypeProfileVisible(true);
+		setSelectDeviceType(deviceTypeInfo);
+	};
+
+    const closeDeviceTypeProfile = () => {
+		setDeviceTypeProfileVisible(false);
+		setSelectDeviceType(null);
+	}
 
     const removeById = (arr: any[], id: string) => {
         const requiredIndex = arr.findIndex(el => {
@@ -67,11 +80,11 @@ export const DeviceTypeList = () => {
             dataIndex: 'actions',
             render: (_: any, elm: { name: string, id: string }) => (
                 <div className="text-right d-flex justify-content-end">
-                    {/* <SpacedActionItem>
+                    <SpacedActionItem>
                         <Tooltip title="View">
-                            <Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => { }} size="small" />
+                            <Button type="primary" className="mr-2" icon={<EyeOutlined />}  onClick={() => { showDeviceTypeProfile(elm) }} size="small" />
                         </Tooltip>
-                    </SpacedActionItem> */}
+                    </SpacedActionItem>
                     <SpacedActionItem>
                         <Tooltip title="Edit">
                             <Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setSelectedDeviceType(elm.name)); dispatch(setEditFlag(true)); history.push("/app/user-dashboard/device-type-template"); }} size="small" />
@@ -100,6 +113,7 @@ export const DeviceTypeList = () => {
                     <Table columns={tableColumns} dataSource={deviceTypeDetails} rowKey='id' />
                 </Spin> : <Table columns={tableColumns} dataSource={deviceTypeDetails} rowKey='id' />}
             </div>
+            <DeviceTypeView data={selectDeviceType} visible={deviceTypeProfileVisible} close={() => { closeDeviceTypeProfile() }} />
         </Card>
     );
 };

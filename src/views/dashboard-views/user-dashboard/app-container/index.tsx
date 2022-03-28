@@ -4,6 +4,8 @@ import DeviceTypeTemplateView from "../device-type-template";
 import DeviceTypeList from "../device-type-list";
 import DeviceTemplateView from '../device-template';
 import DeviceList from '../device-list';
+import DeviceTypeAuditLogs from '../device-type-audit-log';
+import DeviceAuditLogs from '../device-audit-log';
 
 export const AppContainer = (props: { itemSelected: string, userList: any, auditList: any, dispatch: any }) => {
     if (props.itemSelected === 'manage-users-list') {
@@ -18,6 +20,10 @@ export const AppContainer = (props: { itemSelected: string, userList: any, audit
         return <DeviceTemplateView />
     } else if (props.itemSelected === 'device-list') {
         return <DeviceList />
+    } else if (props.itemSelected === 'device-type-audit-logs') {
+        return <DeviceTypeAuditLogs />
+    } else if (props.itemSelected === 'device-audit-logs') {
+        return <DeviceAuditLogs />
     } else {
         return <div />;
     }

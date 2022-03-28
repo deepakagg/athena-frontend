@@ -57,6 +57,22 @@ const dashBoardNavTree = [{
         breadcrumb: true,
         submenu: []
       },
+      {
+        key: 'manage-device-type-audit-logs',
+        path: `${APP_PREFIX_PATH}/user-dashboard/device-type-audit-logs`,
+        title: 'Device type audit logs',
+        icon: '',
+        breadcrumb: true,
+        submenu: []
+      },
+      {
+        key: 'manage-device-audit-logs',
+        path: `${APP_PREFIX_PATH}/user-dashboard/device-audit-logs`,
+        title: 'Device audit logs',
+        icon: '',
+        breadcrumb: true,
+        submenu: []
+      },
     ]
   }]
 }]

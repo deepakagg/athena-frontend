@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, Popconfirm, Spin, Table, Tooltip } from 'antd';
 import {
     selectDeviceDetails, setDeviceDetails, setEditFlag, setSelectedDevice,
@@ -12,6 +12,7 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleOutlined } from '@
 import { useHistory } from "react-router-dom";
 import { DeviceTemplate } from 'views/dashboard-views/interface/Device';
 import DeviceView from './device-view';
+import deviceService from 'services/deviceService';
 
 const StyledDeviceCreateButton = styled.div`
     margin-left: auto; 
@@ -32,15 +33,24 @@ export const DeviceList = () => {
     const history = useHistory();
     const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        setDatatableLoaderState(true);
+        deviceService.getDeviceList()
+            .then((deviceList) => {
+                dispatch(setDeviceDetails(deviceList)); setDatatableLoaderState(false);
+            })
+            .catch((e: any) => { console.log(e); setDatatableLoaderState(false); })
+    }, [dispatch]);
+
     const showDeviceProfile = (deviceInfo: any) => {
-		setDeviceProfileVisible(true);
-		setSelectDevice(deviceInfo);
-	};
+        setDeviceProfileVisible(true);
+        setSelectDevice(deviceInfo);
+    };
 
     const closeDeviceProfile = () => {
-		setDeviceProfileVisible(false);
-		setSelectDevice(null);
-	}
+        setDeviceProfileVisible(false);
+        setSelectDevice(null);
+    }
 
     const removeById = (arr: any[], id: string) => {
         const requiredIndex = arr.findIndex(el => {

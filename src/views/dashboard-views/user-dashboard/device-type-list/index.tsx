@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, Popconfirm, Spin, Table, Tooltip } from 'antd';
 import {
     setSelectedDeviceType,
@@ -15,6 +15,7 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleOutlined } from '@
 import { useHistory } from "react-router-dom";
 import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 import DeviceTypeView from './device-type-view';
+import deviceTypeService from 'services/deviceTypeService';
 
 const StyledDeviceTypeCreateButton = styled.div`
     margin-left: auto; 
@@ -34,6 +35,16 @@ export const DeviceTypeList = () => {
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
     const history = useHistory();
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+		setDatatableLoaderState(true);
+		deviceTypeService.getDeviceTypeList()
+			.then((deviceTypeList) => { 
+                dispatch(setDeviceTypeDetails(deviceTypeList));
+                setDatatableLoaderState(false); 
+            })
+			.catch((e: any) => { console.log(e); setDatatableLoaderState(false); })
+	}, [dispatch]);
 
     const showDeviceTypeProfile = (deviceTypeInfo: any) => {
 		setDeviceTypeProfileVisible(true);

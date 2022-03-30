@@ -25,6 +25,7 @@ import {
 import { DeviceTypeTemplate } from 'views/dashboard-views/interface/Device';
 import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from "react-router-dom";
+import deviceTypeService from 'services/deviceTypeService';
 
 const StyledHeader = styled.div`
     margin-top: 50px;
@@ -128,16 +129,15 @@ export const DeviceTypeTemplateView = () => {
         }
     };
 
-    const onFinish = () => {
+    const onFinish = async () => {
         setDeviceTypeTabClicked(true);
         setDeviceConfigurationTabClicked(false);
         setDeviceDataFormatTabClicked(false);
         setSubmitLoading(true);
         try {
             if (deviceName && deviceProtocol) {
-                const deviceTypeId = editFlag ? deviceTypeDetail?.id as string : uuidv4();
+                // const deviceTypeId = editFlag ? deviceTypeDetail?.id as string : uuidv4();
                 const data: DeviceTypeTemplate = {
-                    id: deviceTypeId,
                     name: deviceName as string,
                     description: deviceDescription as string,
                     protocol: deviceProtocol as string,
@@ -148,8 +148,14 @@ export const DeviceTypeTemplateView = () => {
                 let tempDeviceTypeDetails: DeviceTypeTemplate[] = [];
                 Object.assign(tempDeviceTypeDetails, deviceTypeDetails);
                 if (!editFlag) {
-                    tempDeviceTypeDetails.push(data);
+                    // tempDeviceTypeDetails.push(data);
                     // console.log(tempDeviceTypeDetails);
+                    const response = await deviceTypeService.createDeviceType(data);
+                    if (!response) {
+                        openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device type. An unexpected error occurred`);
+                    } else {
+                        history.push("/app/user-dashboard/device-type-list");
+                    }
                 } else {
                     for (let index in tempDeviceTypeDetails) {
                         if (tempDeviceTypeDetails[index].id === deviceTypeDetail?.id) {
@@ -157,11 +163,10 @@ export const DeviceTypeTemplateView = () => {
                             break;
                         }
                     }
+                    dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
+                    history.push("/app/user-dashboard/device-type-list");
                     // console.log(tempDeviceTypeDetails);
                 }
-                dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
-
-                history.push("/app/user-dashboard/device-type-list");
             } else {
                 openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device type, please re check your data`);
             }

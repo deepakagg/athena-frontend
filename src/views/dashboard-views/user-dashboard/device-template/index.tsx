@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails, selectEditFlag, selectDevice } from "views/dashboard-views/dashboardSlice";
 import { Configuration, ConfigurationDevice, DataFormat, DataFormatDevice, DeviceTemplate, DeviceTypeTemplate } from "views/dashboard-views/interface/Device";
+import deviceService from "services/deviceService";
 
 const StyledHeader = styled.div`
     margin-top: 50px;
@@ -89,16 +90,16 @@ export const DeviceTemplateView = () => {
                 }
             }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editFlag]);
 
     const reverseTransformSavedData = (data: DeviceTemplate): IFormValue => {
         let configuration: any = {};
-        for(let index in data.configuration){
+        for (let index in data.configuration) {
             configuration[`${data.configuration[index].label}_configuration_${data.configuration[index].type}_${data.configuration[index].required}`] = data.configuration[index].value;
-        } 
+        }
         let dataformat: any = {};
-        for(let index in data.dataformat){
+        for (let index in data.dataformat) {
             dataformat[`${data.dataformat[index].label}_dataformat_${data.dataformat[index].type}_${data.dataformat[index].required}`] = data.dataformat[index].value;
         }
         const formData: IFormValue = {
@@ -138,8 +139,14 @@ export const DeviceTemplateView = () => {
             let tempDeviceDetails: DeviceTemplate[] = [];
             Object.assign(tempDeviceDetails, deviceDetails);
             if (!editFlag) {
-                tempDeviceDetails.push(data);
+                // tempDeviceDetails.push(data);
                 // console.log(tempDeviceTypeDetails);
+                const response = await deviceService.createDevice(data);
+                if (!response) {
+                    openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device. An unexpected error occurred`);
+                } else {
+                    history.push("/app/user-dashboard/device-list");
+                }
             } else {
                 for (let index in tempDeviceDetails) {
                     if (tempDeviceDetails[index].id === deviceDetail?.id) {
@@ -148,12 +155,12 @@ export const DeviceTemplateView = () => {
                     }
                 }
                 // console.log(tempDeviceTypeDetails);
+                dispatch(setDeviceDetails(tempDeviceDetails));
+                // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
+                setTimeout(() => {
+                    history.push("/app/user-dashboard/device-list");
+                }, 100);
             }
-            dispatch(setDeviceDetails(tempDeviceDetails));
-            // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
-            setTimeout(() => {
-                history.push("/app/user-dashboard/device-list");
-            }, 100);
         } catch (e) {
             openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device. An unexpected error occurred`);
         }
@@ -254,13 +261,13 @@ export const DeviceTemplateView = () => {
                                             className="w-100"
                                         >
                                             <Select className="w-100" placeholder="Device type" onChange={(value: string) => {
-                                                const selectedDeviceType: DeviceTypeTemplate = deviceTypeDetails.filter((item) => { return item.name === value; })[0];
+                                                const selectedDeviceType: DeviceTypeTemplate = deviceTypeDetails.filter((item) => { return item.id === value; })[0];
                                                 setDeviceTypeConfiguration(selectedDeviceType.configuration);
                                                 setDeviceTypeDataFormat(selectedDeviceType.dataformat);
                                             }}>
                                                 {
                                                     deviceTypeDetails.map(elm => (
-                                                        <Option key={elm.name} value={elm.name}>{elm.name}</Option>
+                                                        <Option key={elm.id} value={elm.id}>{elm.name}</Option>
                                                     ))
                                                 }
                                             </Select>

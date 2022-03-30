@@ -50,6 +50,28 @@ class DeviceService {
         return deviceList;
     }
 
+    public async createDevice(data: DeviceTemplate) {
+        let deviceCreated = false;
+        try {
+            const responseDeviceConfigurationCreate = await axiosService.post('/device/device/', {
+                device_type: parseInt(data.devicetype),
+                device_uuid: data.id,
+                device_configuration: data.configuration,
+            });
+            if (responseDeviceConfigurationCreate.data['id']) {
+                await axiosService.post('/device/devicedata/', {
+                    device: responseDeviceConfigurationCreate.data['id'],
+                    data: data.dataformat,
+                });
+                deviceCreated = true;
+            }
+        }
+        catch (e) {
+            deviceCreated = false;
+        }
+        return deviceCreated;
+    }
+
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }

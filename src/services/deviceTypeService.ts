@@ -26,6 +26,26 @@ class DeviceTypeService {
         return deviceTypeList;
     }
 
+    public async createDeviceType(data: DeviceTypeTemplate) {
+        let deviceTypeCreated = false;
+        try {
+            const response = await axiosService.post('/device/devicetype/', {
+                name: data.name,
+                description: data.description,
+                device_type: data.protocol,
+                device_configuration: data.configuration,
+                device_data_format: data.dataformat,
+            });
+            if (response.data['id']) {
+                deviceTypeCreated = true;
+            }
+        }
+        catch (e) {
+            deviceTypeCreated = false;
+        }
+        return deviceTypeCreated;
+    }
+
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }

@@ -40,4 +40,5 @@ export interface DeviceTemplate {
     description: string;
     configuration: ConfigurationDevice[];
     dataformat: DataFormatDevice[];
+    dataid?: string;
 }

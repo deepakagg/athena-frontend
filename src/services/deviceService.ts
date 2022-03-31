@@ -14,9 +14,13 @@ class DeviceService {
 
             let devicetype: string = '';
             let devicedata: any[] = [];
+            let devicedataid: string = '';
 
             deviceList = deviceconfigurationResponse.data.results.map((item: any) => {
                 const requiredIndexDeviceData = devicedataResponse.data.results.findIndex((element: any) => {
+                    if (element.device === item.id) {
+                        devicedataid = element.id;
+                    }
                     return element.device === item.id;
                 });
                 if (requiredIndexDeviceData === -1) {
@@ -41,6 +45,7 @@ class DeviceService {
                     description: '',
                     configuration: item.device_configuration,
                     dataformat: devicedata,
+                    dataid: devicedataid,
                 };
             });
         }
@@ -70,6 +75,19 @@ class DeviceService {
             deviceCreated = false;
         }
         return deviceCreated;
+    }
+
+    public async deleteDevice(deviceid: string, dataid: string) {
+        let deviceDeleted = false;
+        try {
+            await axiosService.delete(`/device/devicedata/${dataid}/`);
+            await axiosService.delete(`/device/device/${deviceid}/`);
+            deviceDeleted = true;
+        }
+        catch (e) {
+            deviceDeleted = false;
+        }
+        return deviceDeleted;
     }
 
     public static get Instance() {

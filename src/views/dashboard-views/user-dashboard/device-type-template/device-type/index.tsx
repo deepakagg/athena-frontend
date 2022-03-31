@@ -10,7 +10,7 @@ const StyledWidth = styled.div`
 `
 
 const { Option } = Select;
-const channels = ['MQTT', 'HTTP', 'LoRaWAN']
+const channels = ['MQTT', 'HTTP']
 
 const DeviceType = forwardRef((props: {}, ref) => {
     const dispatch = useAppDispatch();

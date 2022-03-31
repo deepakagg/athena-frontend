@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Popconfirm, Spin, Table, Tooltip } from 'antd';
+import { Button, Card, notification, Popconfirm, Spin, Table, Tooltip } from 'antd';
 import {
     setSelectedDeviceType,
     selectDeviceTypeDetails,
@@ -35,42 +35,76 @@ export const DeviceTypeList = () => {
     const deviceTypeDetails = useAppSelector(selectDeviceTypeDetails);
     const history = useHistory();
     const dispatch = useAppDispatch();
+    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
-		setDatatableLoaderState(true);
-		deviceTypeService.getDeviceTypeList()
-			.then((deviceTypeList) => { 
+        setDatatableLoaderState(true);
+        reloadDeviceTypeList();
+    }, [dispatch]);
+
+    const reloadDeviceTypeList = () => {
+        deviceTypeService.getDeviceTypeList()
+            .then((deviceTypeList) => {
                 dispatch(setDeviceTypeDetails(deviceTypeList));
-                setDatatableLoaderState(false); 
+                setDatatableLoaderState(false);
             })
-			.catch((e: any) => { console.log(e); setDatatableLoaderState(false); })
-	}, [dispatch]);
+            .catch((e: any) => { console.log(e); setDatatableLoaderState(false); });
+    }
 
     const showDeviceTypeProfile = (deviceTypeInfo: any) => {
-		setDeviceTypeProfileVisible(true);
-		setSelectDeviceType(deviceTypeInfo);
-	};
-
-    const closeDeviceTypeProfile = () => {
-		setDeviceTypeProfileVisible(false);
-		setSelectDeviceType(null);
-	}
-
-    const removeById = (arr: any[], id: string) => {
-        const requiredIndex = arr.findIndex(el => {
-            return el.id === id;
-        });
-        if (requiredIndex === -1) {
-            return false;
-        };
-        return !!arr.splice(requiredIndex, 1);
+        setDeviceTypeProfileVisible(true);
+        setSelectDeviceType(deviceTypeInfo);
     };
 
-    const onDelete = (id: string) => {
-        let tempDeviceTypeDetails: DeviceTypeTemplate[] = [];
-        Object.assign(tempDeviceTypeDetails, deviceTypeDetails);
-        removeById(tempDeviceTypeDetails, id);
-        dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
+    const closeDeviceTypeProfile = () => {
+        setDeviceTypeProfileVisible(false);
+        setSelectDeviceType(null);
+    }
+
+    // const removeById = (arr: any[], id: string) => {
+    //     const requiredIndex = arr.findIndex(el => {
+    //         return el.id === id;
+    //     });
+    //     if (requiredIndex === -1) {
+    //         return false;
+    //     };
+    //     return !!arr.splice(requiredIndex, 1);
+    // };
+
+    const openNotification = (isSuccess: boolean, message: string, description: string) => {
+        const placement = 'topRight';
+        if (isSuccess) {
+            api.success({
+                message: message,
+                description: description,
+                placement,
+            });
+        }
+        else {
+            api.error({
+                message: message,
+                description: description,
+                placement,
+            });
+        }
+    };
+
+    const onDelete = async (id: string) => {
+        // let tempDeviceTypeDetails: DeviceTypeTemplate[] = [];
+        // Object.assign(tempDeviceTypeDetails, deviceTypeDetails);
+        // removeById(tempDeviceTypeDetails, id);
+        // dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
+        try {
+            const response = await deviceTypeService.deleteDeviceType(id as string);
+            if (!response) {
+                openNotification(false, 'Failed', 'Failed to delete device type. An unexpected error occurred');
+            } else {
+                reloadDeviceTypeList();
+            }
+        } catch (e) {
+            console.log(e);
+            openNotification(false, 'Failed', 'Failed to delete device type. An unexpected error occurred');
+        }
     }
 
     const tableColumns: any = [
@@ -93,7 +127,7 @@ export const DeviceTypeList = () => {
                 <div className="text-right d-flex justify-content-end">
                     <SpacedActionItem>
                         <Tooltip title="View">
-                            <Button type="primary" className="mr-2" icon={<EyeOutlined />}  onClick={() => { showDeviceTypeProfile(elm) }} size="small" />
+                            <Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => { showDeviceTypeProfile(elm) }} size="small" />
                         </Tooltip>
                     </SpacedActionItem>
                     <SpacedActionItem>
@@ -114,6 +148,7 @@ export const DeviceTypeList = () => {
     ];
     return (
         <Card bodyStyle={{ 'padding': '0px' }}>
+            {contextHolder}
             <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
                 <StyledDeviceTypeCreateButton>
                     <Button onClick={(e) => { dispatch(setEditFlag(false)); history.push("/app/user-dashboard/device-type-template"); }} type="primary" icon={<PlusCircleOutlined />} block>Create device type</Button>

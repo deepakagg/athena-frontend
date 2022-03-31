@@ -157,14 +157,20 @@ export const DeviceTypeTemplateView = () => {
                         history.push("/app/user-dashboard/device-type-list");
                     }
                 } else {
-                    for (let index in tempDeviceTypeDetails) {
-                        if (tempDeviceTypeDetails[index].id === deviceTypeDetail?.id) {
-                            tempDeviceTypeDetails[index] = data;
-                            break;
-                        }
+                    // for (let index in tempDeviceTypeDetails) {
+                    //     if (tempDeviceTypeDetails[index].id === deviceTypeDetail?.id) {
+                    //         tempDeviceTypeDetails[index] = data;
+                    //         break;
+                    //     }
+                    // }
+                    // dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
+                    const response = await deviceTypeService.updateDeviceType(deviceTypeDetail?.id as string, data);
+                    if (!response) {
+                        openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device type. An unexpected error occurred`);
+                    } else {
+                        history.push("/app/user-dashboard/device-type-list");
                     }
-                    dispatch(setDeviceTypeDetails(tempDeviceTypeDetails));
-                    history.push("/app/user-dashboard/device-type-list");
+                    // history.push("/app/user-dashboard/device-type-list");
                     // console.log(tempDeviceTypeDetails);
                 }
             } else {

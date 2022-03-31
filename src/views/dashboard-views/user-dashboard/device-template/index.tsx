@@ -5,9 +5,10 @@ import Flex from "views/dashboard-views/components/Flex";
 import PageHeaderAlt from "views/dashboard-views/components/PageHeaderAlt";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails, selectEditFlag, selectDevice } from "views/dashboard-views/dashboardSlice";
+import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails, selectEditFlag, selectDevice, setDeviceTypeDetails } from "views/dashboard-views/dashboardSlice";
 import { Configuration, ConfigurationDevice, DataFormat, DataFormatDevice, DeviceTemplate, DeviceTypeTemplate } from "views/dashboard-views/interface/Device";
 import deviceService from "services/deviceService";
+import deviceTypeService from "services/deviceTypeService";
 
 const StyledHeader = styled.div`
     margin-top: 50px;
@@ -39,7 +40,7 @@ const rules = {
     ],
     description: [
         {
-            required: true,
+            required: false,
             message: 'Please enter device description',
         }
     ]
@@ -90,10 +91,17 @@ export const DeviceTemplateView = () => {
                 }
             }
         }
+        if (deviceTypeDetails.length == 0) {
+            deviceTypeService.getDeviceTypeList().then((deviceTypeList) => {
+                dispatch(setDeviceTypeDetails(deviceTypeList));
+            }).catch((e: any) => { console.log(e); });
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editFlag]);
 
     const reverseTransformSavedData = (data: DeviceTemplate): IFormValue => {
+        // console.log(data);
         let configuration: any = {};
         for (let index in data.configuration) {
             configuration[`${data.configuration[index].label}_configuration_${data.configuration[index].type}_${data.configuration[index].required}`] = data.configuration[index].value;
@@ -103,13 +111,16 @@ export const DeviceTemplateView = () => {
             dataformat[`${data.dataformat[index].label}_dataformat_${data.dataformat[index].type}_${data.dataformat[index].required}`] = data.dataformat[index].value;
         }
         const formData: IFormValue = {
-            deviceId: data.id,
+            deviceId: data.device_uuid,
             name: data.name,
-            devicetype: data.devicetype,
+            device_type: `${data.device_type}`,
+            device_type_id: data.device_type_id,
             description: data.description,
+            dataid: data.dataid,
             ...configuration,
             ...dataformat,
         };
+        // console.log(formData);
         return formData;
     }
 
@@ -136,6 +147,7 @@ export const DeviceTemplateView = () => {
         try {
             const values = await form.validateFields();
             const data = transformFinalData(values);
+            // console.log(data);
             let tempDeviceDetails: DeviceTemplate[] = [];
             Object.assign(tempDeviceDetails, deviceDetails);
             if (!editFlag) {
@@ -148,18 +160,26 @@ export const DeviceTemplateView = () => {
                     history.push("/app/user-dashboard/device-list");
                 }
             } else {
-                for (let index in tempDeviceDetails) {
-                    if (tempDeviceDetails[index].id === deviceDetail?.id) {
-                        tempDeviceDetails[index] = data;
-                        break;
-                    }
-                }
-                // console.log(tempDeviceTypeDetails);
-                dispatch(setDeviceDetails(tempDeviceDetails));
-                // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
-                setTimeout(() => {
+                // console.log(deviceDetails);
+                // for (let index in tempDeviceDetails) {
+                //     if (tempDeviceDetails[index].id === deviceDetail?.id) {
+                //         tempDeviceDetails[index] = data;
+                //         break;
+                //     }
+                // }
+                // // console.log(tempDeviceTypeDetails);
+                // dispatch(setDeviceDetails(tempDeviceDetails));
+                // // openNotification(true, 'Successful', `Device ${data.name} added successfully`);
+                // setTimeout(() => {
+                //     history.push("/app/user-dashboard/device-list");
+                // }, 100);
+                // console.log(data);
+                const response = await deviceService.updateDevice(data);
+                if (!response) {
+                    openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device. An unexpected error occurred`);
+                } else {
                     history.push("/app/user-dashboard/device-list");
-                }, 100);
+                }
             }
         } catch (e) {
             openNotification(false, 'Failed', `Failed to ${editFlag ? 'edit' : 'add'} device. An unexpected error occurred`);
@@ -208,6 +228,7 @@ export const DeviceTemplateView = () => {
     }
 
     const transformFinalData = (data: IFormValue): DeviceTemplate => {
+        // console.log(data);
         const configuration: ConfigurationDevice[] = [];
         const dataformat: DataFormatDevice[] = [];
         if (data) {
@@ -217,7 +238,7 @@ export const DeviceTemplateView = () => {
                 if (data[item] !== undefined && tempArray[1] === 'dataformat') dataformat.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
             }
         }
-        return { id: data['deviceId'] as string, name: data['name'] as string, devicetype: data['devicetype'] as string, description: data['description'] as string, configuration, dataformat };
+        return { id: `${deviceDetail?.id}`, device_type_id: deviceDetail?.device_type_id, dataid: deviceDetail?.dataid, device_uuid: data['deviceId'] as string, name: data['name'] as string, device_type: data['device_type'] as string, description: data['description'] as string, configuration, dataformat };
     }
 
     return (
@@ -255,8 +276,8 @@ export const DeviceTemplateView = () => {
                                     <Col xs={24} sm={24} md={8}>
                                         <Form.Item
                                             label="Device type"
-                                            name={'devicetype'}
-                                            fieldKey={'devicetype'}
+                                            name={'device_type'}
+                                            fieldKey={'device_type'}
                                             rules={[{ required: true, message: 'Please select a device type' }]}
                                             className="w-100"
                                         >

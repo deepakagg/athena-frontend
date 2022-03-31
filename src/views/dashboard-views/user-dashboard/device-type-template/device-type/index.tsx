@@ -41,7 +41,7 @@ const DeviceType = forwardRef((props: {}, ref) => {
         <Card>
             <StyledWidth><h2>Device type</h2></StyledWidth>
             <StyledWidth><p>Add device type details</p></StyledWidth>
-            <Form name="devicetype" layout="vertical" form={form} onValuesChange={(props, values) => onChange(props, values)}>
+            <Form name="device_type" layout="vertical" form={form} onValuesChange={(props, values) => onChange(props, values)}>
                 <Row key={'devicetyperow'} gutter={16}>
                     <Col sm={24} md={7}>
                         <Form.Item

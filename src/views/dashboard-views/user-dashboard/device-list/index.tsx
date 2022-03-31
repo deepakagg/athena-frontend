@@ -34,6 +34,8 @@ export const DeviceList = () => {
     const dispatch = useAppDispatch();
     const [api, contextHolder] = notification.useNotification();
 
+    // console.log(deviceDetails);
+
     useEffect(() => {
         setDatatableLoaderState(true);
         reloadDeviceList();
@@ -114,7 +116,7 @@ export const DeviceList = () => {
         },
         {
             title: 'Device type',
-            dataIndex: 'devicetype',
+            dataIndex: 'device_type',
         },
         {
             title: 'Device description',

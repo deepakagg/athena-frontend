@@ -45,7 +45,7 @@ export class DeviceView extends Component<IProps, {}> {
 					</p>
 					<p>
 						<CalendarOutlined />
-						<StyledSpan className="text-dark">Device type : {data?.devicetype}</StyledSpan>
+						<StyledSpan className="text-dark">Device type : {data?.device_type}</StyledSpan>
 					</p>
 				</div>
 				<div className="mt-5">

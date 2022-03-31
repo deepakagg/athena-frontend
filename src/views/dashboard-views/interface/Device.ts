@@ -34,11 +34,13 @@ export interface DataFormatDevice {
 }
 
 export interface DeviceTemplate {
-    id: string;
+    id?: string;
     name: string;
-    devicetype: string;
+    device_type: string;
     description: string;
     configuration: ConfigurationDevice[];
     dataformat: DataFormatDevice[];
-    dataid?: string;
+    dataid?: number;
+    device_uuid?: string;
+    device_type_id?: number;
 }

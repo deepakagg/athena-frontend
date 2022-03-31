@@ -40,8 +40,10 @@ class DeviceService {
 
                 return {
                     id: item.id,
-                    name: `${item.id}`,
-                    devicetype: devicetype,
+                    name: item.device_uuid,
+                    device_type: devicetype,
+                    device_type_id: item.device_type,
+                    device_uuid: item.device_uuid,
                     description: '',
                     configuration: item.device_configuration,
                     dataformat: devicedata,
@@ -59,8 +61,8 @@ class DeviceService {
         let deviceCreated = false;
         try {
             const responseDeviceConfigurationCreate = await axiosService.post('/device/device/', {
-                device_type: parseInt(data.devicetype),
-                device_uuid: data.id,
+                device_type: parseInt(data.device_type),
+                device_uuid: data.device_uuid,
                 device_configuration: data.configuration,
             });
             if (responseDeviceConfigurationCreate.data['id']) {
@@ -75,6 +77,28 @@ class DeviceService {
             deviceCreated = false;
         }
         return deviceCreated;
+    }
+
+    public async updateDevice(data: DeviceTemplate) {
+        let deviceUpdated = false;
+        try {
+            const responseDeviceConfigurationUpdate = await axiosService.put(`/device/device/${data.id}/`, {
+                device_type: data.device_type_id,
+                device_uuid: data.device_uuid,
+                device_configuration: data.configuration,
+            });
+            if (responseDeviceConfigurationUpdate.data['id']) {
+                await axiosService.put(`/device/devicedata/${data.dataid}/`, {
+                    device: responseDeviceConfigurationUpdate.data['id'],
+                    data: data.dataformat,
+                });
+                deviceUpdated = true;
+            }
+        }
+        catch (e) {
+            deviceUpdated = false;
+        }
+        return deviceUpdated;
     }
 
     public async deleteDevice(deviceid: string, dataid: string) {

@@ -11,7 +11,7 @@ export interface DataFormat {
 }
 
 export interface DeviceTypeTemplate {
-    id: string;
+    id?: string;
     name: string;
     description?: string;
     protocol?: string;
@@ -34,10 +34,13 @@ export interface DataFormatDevice {
 }
 
 export interface DeviceTemplate {
-    id: string;
+    id?: string;
     name: string;
-    devicetype: string;
+    device_type: string;
     description: string;
     configuration: ConfigurationDevice[];
     dataformat: DataFormatDevice[];
+    dataid?: number;
+    device_uuid?: string;
+    device_type_id?: number;
 }

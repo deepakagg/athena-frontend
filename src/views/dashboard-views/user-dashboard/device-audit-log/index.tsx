@@ -2,10 +2,26 @@ import React, { useEffect, useState } from 'react'
 import { Card, Spin, Table } from 'antd';
 import auditService from '../../../../services/auditService';
 import ReactJson from 'react-json-view';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { selectAuditList, updateAuditList } from 'views/dashboard-views/dashboardSlice';
 
 export const DeviceAuditLogs = () => {
-    const auditList: any[] = [];
+    const auditList = useAppSelector(selectAuditList);
+    const dispatch = useAppDispatch();
     const [datatableLoaderState, setDatatableLoaderState] = useState(false);
+
+    useEffect(() => {
+        setDatatableLoaderState(true);
+        auditService.getAuditList()
+            .then((auditLogList) => { dispatch(updateAuditList(getDeviceAuditLogs(auditLogList))); setDatatableLoaderState(false); })
+            .catch((e) => { console.log(e); dispatch(updateAuditList([])); setDatatableLoaderState(false); })
+    }, [dispatch]);
+
+    const getDeviceAuditLogs = (auditLogList: any[]): any[] => {
+        return auditLogList.filter((item: any) => {
+            return item.content_type === 'device' || item.content_type === 'devicedata';
+        });
+    }
 
     const tableColumns: any = [
         {

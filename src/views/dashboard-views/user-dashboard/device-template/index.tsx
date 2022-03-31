@@ -5,7 +5,8 @@ import Flex from "views/dashboard-views/components/Flex";
 import PageHeaderAlt from "views/dashboard-views/components/PageHeaderAlt";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { selectDeviceTypeDetails, selectDeviceDetails, setDeviceDetails, selectEditFlag, selectDevice, setDeviceTypeDetails } from "views/dashboard-views/dashboardSlice";
+import { selectDeviceTypeDetails, selectDeviceDetails, selectEditFlag, selectDevice, setDeviceTypeDetails } from "views/dashboard-views/dashboardSlice";
+// import { setDeviceDetails } from "views/dashboard-views/dashboardSlice";
 import { Configuration, ConfigurationDevice, DataFormat, DataFormatDevice, DeviceTemplate, DeviceTypeTemplate } from "views/dashboard-views/interface/Device";
 import deviceService from "services/deviceService";
 import deviceTypeService from "services/deviceTypeService";
@@ -91,7 +92,7 @@ export const DeviceTemplateView = () => {
                 }
             }
         }
-        if (deviceTypeDetails.length == 0) {
+        if (deviceTypeDetails.length === 0) {
             deviceTypeService.getDeviceTypeList().then((deviceTypeList) => {
                 dispatch(setDeviceTypeDetails(deviceTypeList));
             }).catch((e: any) => { console.log(e); });

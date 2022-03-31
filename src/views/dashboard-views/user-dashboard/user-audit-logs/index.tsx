@@ -18,9 +18,15 @@ export const UserAuditLogs = (props: IProps) => {
     useEffect(() => {
         setDatatableLoaderState(true);
         auditService.getAuditList()
-            .then((auditLogList) => { dispatch(updateAuditList(auditLogList)); setDatatableLoaderState(false); })
+            .then((auditLogList) => { dispatch(updateAuditList(getAuthAuditLogs(auditLogList))); setDatatableLoaderState(false); })
             .catch((e) => { console.log(e); dispatch(updateAuditList([])); setDatatableLoaderState(false); })
     }, [dispatch]);
+
+    const getAuthAuditLogs = (auditLogList: any[]): any[] => {
+        return auditLogList.filter((item: any) => {
+            return item.content_type === 'user' || item.content_type === 'roles';
+        });
+    }
 
     const tableColumns: any = [
         {

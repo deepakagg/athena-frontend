@@ -125,6 +125,18 @@ class AuthService {
         return userRolesList;
     }
 
+    public async deleteUserRole(roleId: string) {
+        let userRoleDeleted = false;
+        try {
+            await axiosService.delete(`/auth/roles/${roleId}/`);
+            userRoleDeleted = true;
+        }
+        catch (e) {
+            userRoleDeleted = false;
+        }
+        return userRoleDeleted;
+    }
+
     public async getUserGroups() {
         let userGroupsList = [];
         try {
@@ -135,6 +147,18 @@ class AuthService {
             userGroupsList = [];
         }
         return userGroupsList;
+    }
+
+    public async deleteUserGroup(groupId: string) {
+        let userGroupDeleted = false;
+        try {
+            await axiosService.delete(`/auth/groups/${groupId}/`);
+            userGroupDeleted = true;
+        }
+        catch (e) {
+            userGroupDeleted = false;
+        }
+        return userGroupDeleted;
     }
 
     public static get Instance() {

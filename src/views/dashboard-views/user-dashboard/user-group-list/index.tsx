@@ -53,17 +53,17 @@ export const UserGroupList = () => {
 		}
 	};
 
-	// const deleteUser = async (userId: any, email: string) => {
-	// 	const response = await authService.deleteUser(userId);
-	// 	if (response) {
-	// 		const users = userGroupList.filter((item: { id: any; }) => item.id !== userId)
-	// 		dispatch(updateUserList(users));
-	// 		openNotification(true, 'Successful', `Deleted user ${email}`);
-	// 	}
-	// 	else {
-	// 		openNotification(false, 'Failed', `Failed to delete user ${email}`);
-	// 	}
-	// }
+	const deleteUserGroup = async (groupId: any, name: string) => {
+		const response = await authService.deleteUserGroup(groupId);
+		if (response) {
+			const userGroup = userGroupList.filter((item: { id: any; }) => item.id !== groupId)
+			dispatch(updateUserGroupList(userGroup));
+			openNotification(true, 'Successful', `Deleted group ${name}`);
+		}
+		else {
+			openNotification(false, 'Failed', `Failed to delete group ${name}`);
+		}
+	}
 
 	// const updateUser = async () => {
 	// 	dispatch(setUpdateUserModalViewState(true));
@@ -85,26 +85,26 @@ export const UserGroupList = () => {
                 <ReactJson collapsed={true} src={roles} enableClipboard={false} />
             ),
         },
-		// {
-		// 	title: '',
-		// 	dataIndex: 'actions',
-		// 	render: (_: any, elm: { id: any; email: string }) => (
-		// 		<div className="text-right d-flex justify-content-end">
-		// 			<SpacedActionItem>
-		// 				<Tooltip title="Edit">
-		// 					<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
-		// 				</Tooltip>
-		// 			</SpacedActionItem>
-		// 			<SpacedActionItem>
-		// 				<Tooltip title="Delete">
-		// 					<Popconfirm disabled={elm.email === userEmail ? true : false} placement="left" title={`Confirm delete user ${elm.email}?`} onConfirm={() => { deleteUser(elm.id, elm.email) }} okText="Yes" cancelText="No">
-		// 						<Button disabled={elm.email === userEmail ? true : false} danger icon={<DeleteOutlined />} size="small" />
-		// 					</Popconfirm>
-		// 				</Tooltip>
-		// 			</SpacedActionItem>
-		// 		</div>
-		// 	)
-		// }
+		{
+			title: '',
+			dataIndex: 'actions',
+			render: (_: any, elm: { id: any; name: string }) => (
+				<div className="text-right d-flex justify-content-end">
+					{/* <SpacedActionItem>
+						<Tooltip title="Edit">
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
+						</Tooltip>
+					</SpacedActionItem> */}
+					<SpacedActionItem>
+						<Tooltip title="Delete">
+							<Popconfirm placement="left" title={`Confirm delete group ${elm.name}?`} onConfirm={() => { deleteUserGroup(elm.id, elm.name) }} okText="Yes" cancelText="No">
+								<Button danger icon={<DeleteOutlined />} size="small" />
+							</Popconfirm>
+						</Tooltip>
+					</SpacedActionItem>
+				</div>
+			)
+		}
 	];
 	return (
 		<div>

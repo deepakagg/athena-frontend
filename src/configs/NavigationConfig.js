@@ -36,7 +36,7 @@ const dashBoardNavTree = [{
       {
         key: 'manage-user-groups-list',
         path: `${APP_PREFIX_PATH}/user-dashboard/manage-user-groups-list`,
-        title: 'Group',
+        title: 'Group list',
         icon: '',
         breadcrumb: true,
         submenu: []

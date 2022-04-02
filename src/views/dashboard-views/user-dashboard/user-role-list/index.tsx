@@ -53,17 +53,17 @@ export const UserRoleList = () => {
 		}
 	};
 
-	// const deleteUser = async (userId: any, email: string) => {
-	// 	const response = await authService.deleteUser(userId);
-	// 	if (response) {
-	// 		const users = userRoleList.filter((item: { id: any; }) => item.id !== userId)
-	// 		dispatch(updateUserList(users));
-	// 		openNotification(true, 'Successful', `Deleted user ${email}`);
-	// 	}
-	// 	else {
-	// 		openNotification(false, 'Failed', `Failed to delete user ${email}`);
-	// 	}
-	// }
+	const deleteUserRole = async (roleId: any, name: string) => {
+		const response = await authService.deleteUserRole(roleId);
+		if (response) {
+			const userRole = userRoleList.filter((item: { id: any; }) => item.id !== roleId)
+			dispatch(updateUserRoleList(userRole));
+			openNotification(true, 'Successful', `Deleted role ${name}`);
+		}
+		else {
+			openNotification(false, 'Failed', `Failed to delete role  ${name}`);
+		}
+	}
 
 	// const updateUser = async () => {
 	// 	dispatch(setUpdateUserModalViewState(true));
@@ -100,26 +100,26 @@ export const UserRoleList = () => {
             title: 'Content type',
             dataIndex: 'content_type',
         },
-		// {
-		// 	title: '',
-		// 	dataIndex: 'actions',
-		// 	render: (_: any, elm: { id: any; email: string }) => (
-		// 		<div className="text-right d-flex justify-content-end">
-		// 			<SpacedActionItem>
-		// 				<Tooltip title="Edit">
-		// 					<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
-		// 				</Tooltip>
-		// 			</SpacedActionItem>
-		// 			<SpacedActionItem>
-		// 				<Tooltip title="Delete">
-		// 					<Popconfirm disabled={elm.email === userEmail ? true : false} placement="left" title={`Confirm delete user ${elm.email}?`} onConfirm={() => { deleteUser(elm.id, elm.email) }} okText="Yes" cancelText="No">
-		// 						<Button disabled={elm.email === userEmail ? true : false} danger icon={<DeleteOutlined />} size="small" />
-		// 					</Popconfirm>
-		// 				</Tooltip>
-		// 			</SpacedActionItem>
-		// 		</div>
-		// 	)
-		// }
+		{
+			title: '',
+			dataIndex: 'actions',
+			render: (_: any, elm: { id: any, name: any }) => (
+				<div className="text-right d-flex justify-content-end">
+					{/* <SpacedActionItem>
+						<Tooltip title="Edit">
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
+						</Tooltip>
+					</SpacedActionItem> */}
+					<SpacedActionItem>
+						<Tooltip title="Delete">
+							<Popconfirm placement="left" title={`Confirm delete role ${elm.name}?`} onConfirm={() => { deleteUserRole(elm.id, elm.name) }} okText="Yes" cancelText="No">
+								<Button danger icon={<DeleteOutlined />} size="small" />
+							</Popconfirm>
+						</Tooltip>
+					</SpacedActionItem>
+				</div>
+			)
+		}
 	];
 	return (
 		<div>

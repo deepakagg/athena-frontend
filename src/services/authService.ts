@@ -113,6 +113,30 @@ class AuthService {
         return axiosService.getUserEmail();
     }
 
+    public async getUserRoles() {
+        let userRolesList = [];
+        try {
+            const response = await axiosService.get('/auth/roles/');
+            userRolesList = response.data.results;
+        }
+        catch (e: any) {
+            userRolesList = [];
+        }
+        return userRolesList;
+    }
+
+    public async getUserGroups() {
+        let userGroupsList = [];
+        try {
+            const response = await axiosService.get('/auth/groups/');
+            userGroupsList = response.data.results;
+        }
+        catch (e: any) {
+            userGroupsList = [];
+        }
+        return userGroupsList;
+    }
+
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }

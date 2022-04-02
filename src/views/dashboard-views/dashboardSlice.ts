@@ -4,6 +4,12 @@ import { Configuration, DataFormat, DeviceTypeTemplate, DeviceTemplate } from '.
 
 export interface DashboardState {
     userlist: any[];
+    userRoleList: any[];
+    isOpenCreateUserRoleModal: boolean;
+    isOpenUpdateUserRoleModal: boolean;
+    userGroupList: any[];
+    isOpenCreateUserGroupModal: boolean;
+    isOpenUpdateUserGroupModal: boolean;
     auditList: any[];
     isOpenCreateUserModal: boolean;
     isOpenUpdateUserModal: boolean;
@@ -22,6 +28,12 @@ export interface DashboardState {
 
 const initialState: DashboardState = {
     userlist: [],
+    userRoleList: [],
+    isOpenCreateUserRoleModal: false,
+    isOpenUpdateUserRoleModal: false,
+    userGroupList: [],
+    isOpenCreateUserGroupModal: false,
+    isOpenUpdateUserGroupModal: false,
     auditList: [],
     isOpenCreateUserModal: false,
     isOpenUpdateUserModal: false,
@@ -44,6 +56,24 @@ export const dashboardSlice = createSlice({
     reducers: {
         updateUserList: (state, action: PayloadAction<any[]>) => {
             state.userlist = action.payload;
+        },
+        updateUserRoleList: (state, action: PayloadAction<any[]>) => {
+            state.userRoleList = action.payload;
+        },
+        updateCreateUserRoleModalViewState: (state, action: PayloadAction<boolean>) => {
+            state.isOpenCreateUserRoleModal = action.payload;
+        },
+        setUpdateUserRoleModalViewState: (state, action: PayloadAction<boolean>) => {
+            state.isOpenUpdateUserRoleModal = action.payload;
+        },
+        updateUserGroupList: (state, action: PayloadAction<any[]>) => {
+            state.userGroupList = action.payload;
+        },
+        updateCreateUserGroupModalViewState: (state, action: PayloadAction<boolean>) => {
+            state.isOpenCreateUserGroupModal = action.payload;
+        },
+        setUpdateUserGroupModalViewState: (state, action: PayloadAction<boolean>) => {
+            state.isOpenUpdateUserGroupModal = action.payload;
         },
         updateAuditList: (state, action: PayloadAction<any[]>) => {
             state.auditList = action.payload;
@@ -90,9 +120,15 @@ export const dashboardSlice = createSlice({
     },
 });
 
-export const { updateUserList, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails, setEditFlag, setSelectedDeviceType, setSelectedDevice } = dashboardSlice.actions;
+export const { updateUserList, updateUserRoleList, updateCreateUserRoleModalViewState, setUpdateUserRoleModalViewState, updateUserGroupList, updateCreateUserGroupModalViewState, setUpdateUserGroupModalViewState, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails, setEditFlag, setSelectedDeviceType, setSelectedDevice } = dashboardSlice.actions;
 
 export const selectUserList = (state: RootState) => state.dashboard.userlist;
+export const selectUserRoleList = (state: RootState) => state.dashboard.userRoleList;
+export const selectCreateUserRoleModalViewState = (state: RootState) => state.dashboard.isOpenCreateUserRoleModal;
+export const selectUpdateUserRoleModalViewState = (state: RootState) => state.dashboard.isOpenUpdateUserRoleModal;
+export const selectUserGroupList = (state: RootState) => state.dashboard.userGroupList;
+export const selectCreateUserGroupModalViewState = (state: RootState) => state.dashboard.isOpenCreateUserGroupModal;
+export const selectUpdateUserGroupModalViewState = (state: RootState) => state.dashboard.isOpenUpdateUserGroupModal;
 export const selectAuditList = (state: RootState) => state.dashboard.auditList;
 export const selectCreateUserModalViewState = (state: RootState) => state.dashboard.isOpenCreateUserModal;
 export const selectUpdateUserModalViewState = (state: RootState) => state.dashboard.isOpenUpdateUserModal;

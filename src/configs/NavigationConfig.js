@@ -26,6 +26,22 @@ const dashBoardNavTree = [{
         submenu: []
       },
       {
+        key: 'manage-user-roles-list',
+        path: `${APP_PREFIX_PATH}/user-dashboard/manage-user-roles-list`,
+        title: 'Role list',
+        icon: '',
+        breadcrumb: true,
+        submenu: []
+      },
+      {
+        key: 'manage-user-groups-list',
+        path: `${APP_PREFIX_PATH}/user-dashboard/manage-user-groups-list`,
+        title: 'Group',
+        icon: '',
+        breadcrumb: true,
+        submenu: []
+      },
+      {
         key: 'manage-user-audit-logs',
         path: `${APP_PREFIX_PATH}/user-dashboard/manage-user-audit-logs`,
         title: 'Audit logs',

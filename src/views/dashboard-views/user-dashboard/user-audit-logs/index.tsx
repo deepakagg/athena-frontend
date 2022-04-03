@@ -24,7 +24,7 @@ export const UserAuditLogs = (props: IProps) => {
 
     const getAuthAuditLogs = (auditLogList: any[]): any[] => {
         return auditLogList.filter((item: any) => {
-            return item.content_type === 'user' || item.content_type === 'roles';
+            return item.content_type === 'user' || item.content_type === 'roles' || item.content_type === 'group';
         });
     }
 

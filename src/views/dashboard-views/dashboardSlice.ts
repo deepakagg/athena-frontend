@@ -4,6 +4,12 @@ import { Configuration, DataFormat, DeviceTypeTemplate, DeviceTemplate } from '.
 
 export interface DashboardState {
     userlist: any[];
+    userRoleList: any[];
+    userRoleId: string | undefined;
+    isOpenCreateUpdateUserRoleModal: boolean;
+    userGroupList: any[];
+    userGroupId: string | undefined;
+    isOpenCreateUpdateUserGroupModal: boolean;
     auditList: any[];
     isOpenCreateUserModal: boolean;
     isOpenUpdateUserModal: boolean;
@@ -22,6 +28,12 @@ export interface DashboardState {
 
 const initialState: DashboardState = {
     userlist: [],
+    userRoleList: [],
+    userRoleId: undefined,
+    isOpenCreateUpdateUserRoleModal: false,
+    userGroupList: [],
+    userGroupId: undefined,
+    isOpenCreateUpdateUserGroupModal: false,
     auditList: [],
     isOpenCreateUserModal: false,
     isOpenUpdateUserModal: false,
@@ -44,6 +56,24 @@ export const dashboardSlice = createSlice({
     reducers: {
         updateUserList: (state, action: PayloadAction<any[]>) => {
             state.userlist = action.payload;
+        },
+        updateUserRoleList: (state, action: PayloadAction<any[]>) => {
+            state.userRoleList = action.payload;
+        },
+        setUserRoleIdState: (state, action: PayloadAction<string>) => {
+            state.userRoleId = action.payload;
+        },
+        setCreateUpdateUserRoleModalViewState: (state, action: PayloadAction<boolean>) => {
+            state.isOpenCreateUpdateUserRoleModal = action.payload;
+        },
+        updateUserGroupList: (state, action: PayloadAction<any[]>) => {
+            state.userGroupList = action.payload;
+        },
+        setUserGroupIdState: (state, action: PayloadAction<string>) => {
+            state.userGroupId = action.payload;
+        },
+        setCreateUpdateUserGroupModalViewState: (state, action: PayloadAction<boolean>) => {
+            state.isOpenCreateUpdateUserGroupModal = action.payload;
         },
         updateAuditList: (state, action: PayloadAction<any[]>) => {
             state.auditList = action.payload;
@@ -90,9 +120,15 @@ export const dashboardSlice = createSlice({
     },
 });
 
-export const { updateUserList, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails, setEditFlag, setSelectedDeviceType, setSelectedDevice } = dashboardSlice.actions;
+export const { updateUserList, updateUserRoleList, setUserRoleIdState, setCreateUpdateUserRoleModalViewState, updateUserGroupList, setUserGroupIdState, setCreateUpdateUserGroupModalViewState, updateAuditList, updateCreateUserModalViewState, setUpdateUserModalViewState, setUserIdState, setDeviceTypeDetails, setDeviceName, setDeviceDescription, setDeviceProtocol, setDeviceConfiguration, setDeviceDataFormat, setDeviceDetails, setEditFlag, setSelectedDeviceType, setSelectedDevice } = dashboardSlice.actions;
 
 export const selectUserList = (state: RootState) => state.dashboard.userlist;
+export const selectUserRoleList = (state: RootState) => state.dashboard.userRoleList;
+export const selectUserRoleId = (state: RootState) => state.dashboard.userRoleId;
+export const selectCreateUpdateUserRoleModalViewState = (state: RootState) => state.dashboard.isOpenCreateUpdateUserRoleModal;
+export const selectUserGroupList = (state: RootState) => state.dashboard.userGroupList;
+export const selectUserGroupId = (state: RootState) => state.dashboard.userGroupId;
+export const selectCreateUpdateUserGroupModalViewState = (state: RootState) => state.dashboard.isOpenCreateUpdateUserGroupModal;
 export const selectAuditList = (state: RootState) => state.dashboard.auditList;
 export const selectCreateUserModalViewState = (state: RootState) => state.dashboard.isOpenCreateUserModal;
 export const selectUpdateUserModalViewState = (state: RootState) => state.dashboard.isOpenUpdateUserModal;

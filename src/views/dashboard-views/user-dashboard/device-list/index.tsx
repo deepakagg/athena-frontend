@@ -87,13 +87,13 @@ export const DeviceList = () => {
         }
     };
 
-    const onDelete = async (id: string, dataid: string) => {
+    const onDelete = async (id: string) => {
         // let tempDeviceDetails: DeviceTemplate[] = [];
         // Object.assign(tempDeviceDetails, deviceDetails);
         // removeById(tempDeviceDetails, id);
         // dispatch(setDeviceDetails(tempDeviceDetails));
         try {
-            const response = await deviceService.deleteDevice(id, dataid);
+            const response = await deviceService.deleteDevice(id);
             if (!response) {
                 openNotification(false, 'Failed', 'Failed to delete device. An unexpected error occurred');
             } else {
@@ -125,7 +125,7 @@ export const DeviceList = () => {
         {
             title: '',
             dataIndex: 'actions',
-            render: (_: any, elm: { name: string, id: string, dataid: string }) => (
+            render: (_: any, elm: { name: string, id: string }) => (
                 <div className="text-right d-flex justify-content-end">
                     <SpacedActionItem>
                         <Tooltip title="View">
@@ -139,7 +139,7 @@ export const DeviceList = () => {
                     </SpacedActionItem>
                     <SpacedActionItem>
                         <Tooltip title="Delete">
-                            <Popconfirm placement="left" title={`Confirm delete device?`} onConfirm={() => { onDelete(elm.id, elm.dataid); }} okText="Yes" cancelText="No">
+                            <Popconfirm placement="left" title={`Confirm delete device?`} onConfirm={() => { onDelete(elm.id); }} okText="Yes" cancelText="No">
                                 <Button danger icon={<DeleteOutlined />} size="small" />
                             </Popconfirm>
                         </Tooltip>

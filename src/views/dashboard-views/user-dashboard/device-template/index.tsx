@@ -78,14 +78,14 @@ export const DeviceTemplateView = () => {
                         };
                     })
                     setDeviceTypeConfiguration(config);
-                    const dataformat: DataFormat[] = deviceDetails[i].dataformat.map((item: DataFormatDevice) => {
-                        return {
-                            label: item.label as string,
-                            type: item.type as string,
-                            required: item.required as boolean,
-                        };
-                    })
-                    setDeviceTypeDataFormat(dataformat);
+                    // const dataformat: DataFormat[] = deviceDetails[i].dataformat.map((item: DataFormatDevice) => {
+                    //     return {
+                    //         label: item.label as string,
+                    //         type: item.type as string,
+                    //         required: item.required as boolean,
+                    //     };
+                    // })
+                    // setDeviceTypeDataFormat(dataformat);
                     const formData = reverseTransformSavedData(deviceDetails[i]);
                     form.setFieldsValue(formData);
                     break;
@@ -107,19 +107,19 @@ export const DeviceTemplateView = () => {
         for (let index in data.configuration) {
             configuration[`${data.configuration[index].label}_configuration_${data.configuration[index].type}_${data.configuration[index].required}`] = data.configuration[index].value;
         }
-        let dataformat: any = {};
-        for (let index in data.dataformat) {
-            dataformat[`${data.dataformat[index].label}_dataformat_${data.dataformat[index].type}_${data.dataformat[index].required}`] = data.dataformat[index].value;
-        }
+        // let dataformat: any = {};
+        // for (let index in data.dataformat) {
+        //     dataformat[`${data.dataformat[index].label}_dataformat_${data.dataformat[index].type}_${data.dataformat[index].required}`] = data.dataformat[index].value;
+        // }
         const formData: IFormValue = {
             deviceId: data.device_uuid,
             name: data.name,
             device_type: `${data.device_type}`,
             device_type_id: data.device_type_id,
             description: data.description,
-            dataid: data.dataid,
+            // dataid: data.dataid,
             ...configuration,
-            ...dataformat,
+            // ...dataformat,
         };
         // console.log(formData);
         return formData;
@@ -236,10 +236,10 @@ export const DeviceTemplateView = () => {
             for (let item in data) {
                 const tempArray = item.split('_');
                 if (data[item] !== undefined && tempArray[1] === 'configuration') configuration.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
-                if (data[item] !== undefined && tempArray[1] === 'dataformat') dataformat.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
+                // if (data[item] !== undefined && tempArray[1] === 'dataformat') dataformat.push({ label: tempArray[0], value: data[item], type: tempArray[2], required: tempArray[3] === 'true' });
             }
         }
-        return { id: `${deviceDetail?.id}`, device_type_id: deviceDetail?.device_type_id, dataid: deviceDetail?.dataid, device_uuid: data['deviceId'] as string, name: data['name'] as string, device_type: data['device_type'] as string, description: data['description'] as string, configuration, dataformat };
+        return { id: `${deviceDetail?.id}`, device_type_id: deviceDetail?.device_type_id, device_uuid: data['deviceId'] as string, name: data['name'] as string, device_type: data['device_type'] as string, description: data['description'] as string, configuration, dataformat };
     }
 
     return (
@@ -320,7 +320,7 @@ export const DeviceTemplateView = () => {
                                 </Row>
                             </Card>
                         </Col> : null}
-                        {deviceTypeDataFormat.length > 0 ? <Col xs={24} sm={24} md={24}>
+                        {/* {deviceTypeDataFormat.length > 0 ? <Col xs={24} sm={24} md={24}>
                             <Card title="Data format">
                                 <Row gutter={16}>
                                     {
@@ -339,7 +339,7 @@ export const DeviceTemplateView = () => {
                                     }
                                 </Row>
                             </Card>
-                        </Col> : null}
+                        </Col> : null} */}
                     </Row>
                 </Form>
             </StyledBody>

@@ -25,9 +25,16 @@ import {
     selectUpdateUserModalViewState,
     setUpdateUserModalViewState,
     selectUserId,
+    selectCreateUpdateUserRoleModalViewState,
+    setCreateUpdateUserRoleModalViewState,
+    selectEditFlag,
+    selectCreateUpdateUserGroupModalViewState,
+    setCreateUpdateUserGroupModalViewState,
 } from '../dashboardSlice';
 import Signup from 'views/auth-views/authentication/signup';
 import UpdateForm from 'views/auth-views/components/UpdateForm';
+import UserRoleCreateUpdateForm from './user-role-create-update';
+import UserGroupCreateUpdateForm from './user-group-create-update';
 
 const { Content } = Layout;
 
@@ -40,7 +47,10 @@ export const UserDashboard = () => {
     const auditList = useAppSelector(selectAuditList);
     const isOpenCreateUserModal = useAppSelector(selectCreateUserModalViewState);
     const isOpenUpdateUserModal = useAppSelector(selectUpdateUserModalViewState);
+    const isOpenCreateUpdateUserRoleModal = useAppSelector(selectCreateUpdateUserRoleModalViewState);
+    const isOpenCreateUpdateGroupModal = useAppSelector(selectCreateUpdateUserGroupModalViewState);
     const selectedUserId = useAppSelector(selectUserId);
+    const editFlag = useAppSelector(selectEditFlag);
     const dispatch = useAppDispatch();
     const getLayoutGutter = () => {
         if (isNavTop || isMobile) {
@@ -76,6 +86,14 @@ export const UserDashboard = () => {
         dispatch(setUpdateUserModalViewState(false));
     };
 
+    const handleCancelCreateUpdateUserRole = () => {
+        dispatch(setCreateUpdateUserRoleModalViewState(false));
+    };
+
+    const handleCancelCreateUpdateUserGroup = () => {
+        dispatch(setCreateUpdateUserGroupModalViewState(false));
+    };
+
     return (
         <Layout>
             <HeaderNav isMobile={isMobile} navCollapsed={navCollapsed} mobileNav={undefined} navType={undefined} headerNavColor={undefined} toggleCollapsedNav={setNavCollapsed} onMobileNavToggle={undefined} currentTheme={undefined} direction={undefined} onLogout={onLogout} dispatch={dispatch} />
@@ -95,6 +113,12 @@ export const UserDashboard = () => {
                         </Modal>
                         <Modal title="Update User" visible={isOpenUpdateUserModal} footer={null} onCancel={handleCancelUpdateUser}>
                             <UpdateForm isInternal={true} selectedUserId={selectedUserId} dispatch={dispatch}/>
+                        </Modal>
+                        <Modal title={`${editFlag ? 'Update' : 'Create'} User role`} visible={isOpenCreateUpdateUserRoleModal} footer={null} onCancel={handleCancelCreateUpdateUserRole}>
+                            <UserRoleCreateUpdateForm />
+                        </Modal>
+                        <Modal title={`${editFlag ? 'Update' : 'Create'} User group`} visible={isOpenCreateUpdateGroupModal} footer={null} onCancel={handleCancelCreateUpdateUserGroup}>
+                            <UserGroupCreateUpdateForm />
                         </Modal>
                     </Content>
                 </div>

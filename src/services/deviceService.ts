@@ -8,31 +8,31 @@ class DeviceService {
     public async getDeviceList() {
         let deviceList: DeviceTemplate[] = [];
         try {
-            const devicedataResponse = await axiosService.get('/device/devicedata/');
+            // const devicedataResponse = await axiosService.get('/device/devicedata/');
             const deviceconfigurationResponse = await axiosService.get('/device/device/');
             const devicetypeResponse = await axiosService.get('/device/devicetype/');
 
             let devicetype: string = '';
-            let devicedata: any[] = [];
-            let devicedataid: string = '';
+            // let devicedata: any[] = [];
+            // let devicedataid: string = '';
 
             deviceList = deviceconfigurationResponse.data.results.map((item: any) => {
-                const requiredIndexDeviceData = devicedataResponse.data.results.findIndex((element: any) => {
-                    if (element.device === item.id) {
-                        devicedataid = element.id;
-                    }
-                    return element.device === item.id;
-                });
-                if (requiredIndexDeviceData === -1) {
-                    devicedata = [];
-                } else {
-                    devicedata = devicedataResponse.data.results[requiredIndexDeviceData].data;
-                }
+                // const requiredIndexDeviceData = devicedataResponse.data.results.findIndex((element: any) => {
+                //     if (element.device === item.id) {
+                //         devicedataid = element.id;
+                //     }
+                //     return element.device === item.id;
+                // });
+                // if (requiredIndexDeviceData === -1) {
+                //     devicedata = [];
+                // } else {
+                //     devicedata = devicedataResponse.data.results[requiredIndexDeviceData].data;
+                // }
 
                 const requiredIndexDeviceType = devicetypeResponse.data.results.findIndex((element: any) => {
                     return element.id === item.device_type;
                 });
-                if (requiredIndexDeviceData === -1) {
+                if (requiredIndexDeviceType === -1) {
                     devicetype = '';
                 } else {
                     devicetype = devicetypeResponse.data.results[requiredIndexDeviceType].name;
@@ -46,8 +46,8 @@ class DeviceService {
                     device_uuid: item.device_uuid,
                     description: '',
                     configuration: item.device_configuration,
-                    dataformat: devicedata,
-                    dataid: devicedataid,
+                    // dataformat: devicedata,
+                    // dataid: devicedataid,
                 };
             });
         }
@@ -65,13 +65,14 @@ class DeviceService {
                 device_uuid: data.device_uuid,
                 device_configuration: data.configuration,
             });
-            if (responseDeviceConfigurationCreate.data['id']) {
-                await axiosService.post('/device/devicedata/', {
-                    device: responseDeviceConfigurationCreate.data['id'],
-                    data: data.dataformat,
-                });
-                deviceCreated = true;
-            }
+            // if (responseDeviceConfigurationCreate.data['id']) {
+            //     await axiosService.post('/device/devicedata/', {
+            //         device: responseDeviceConfigurationCreate.data['id'],
+            //         data: data.dataformat,
+            //     });
+            //     deviceCreated = true;
+            // }
+            deviceCreated = true;
         }
         catch (e) {
             deviceCreated = false;
@@ -87,13 +88,14 @@ class DeviceService {
                 device_uuid: data.device_uuid,
                 device_configuration: data.configuration,
             });
-            if (responseDeviceConfigurationUpdate.data['id']) {
-                await axiosService.put(`/device/devicedata/${data.dataid}/`, {
-                    device: responseDeviceConfigurationUpdate.data['id'],
-                    data: data.dataformat,
-                });
-                deviceUpdated = true;
-            }
+            // if (responseDeviceConfigurationUpdate.data['id']) {
+            //     await axiosService.put(`/device/devicedata/${data.dataid}/`, {
+            //         device: responseDeviceConfigurationUpdate.data['id'],
+            //         data: data.dataformat,
+            //     });
+            //     deviceUpdated = true;
+            // }
+            deviceUpdated = true;
         }
         catch (e) {
             deviceUpdated = false;
@@ -101,10 +103,10 @@ class DeviceService {
         return deviceUpdated;
     }
 
-    public async deleteDevice(deviceid: string, dataid: string) {
+    public async deleteDevice(deviceid: string) {
         let deviceDeleted = false;
         try {
-            await axiosService.delete(`/device/devicedata/${dataid}/`);
+            // await axiosService.delete(`/device/devicedata/${dataid}/`);
             await axiosService.delete(`/device/device/${deviceid}/`);
             deviceDeleted = true;
         }

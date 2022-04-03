@@ -54,12 +54,12 @@ export class DeviceView extends Component<IProps, {}> {
 						<ReactJson collapsed={true} src={data?.configuration} enableClipboard={false} />
 					</StyledSpan>
 				</div>
-				<div className="mt-5">
+				{/* <div className="mt-5">
 					<h6 className="text-muted text-uppercase mb-3">Device data format details</h6>
 					<StyledSpan className="text-dark">
 						<ReactJson collapsed={true} src={data?.dataformat} enableClipboard={false} />
 					</StyledSpan>
-				</div>
+				</div> */}
 			</Drawer>
 		)
 	}

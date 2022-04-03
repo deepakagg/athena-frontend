@@ -91,10 +91,10 @@ export const UserRoleList = () => {
 			title: 'Query',
 			dataIndex: 'query',
 		},
-		{
-			title: 'Content type',
-			dataIndex: 'content_type',
-		},
+		// {
+		// 	title: 'Content type',
+		// 	dataIndex: 'content_type',
+		// },
 		{
 			title: '',
 			dataIndex: 'actions',

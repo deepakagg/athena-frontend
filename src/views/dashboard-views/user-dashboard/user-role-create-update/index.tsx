@@ -95,7 +95,8 @@ export const UserRoleCreateUpdateForm = () => {
 
     const onFinish = (values: any) => {
         // console.log(values);
-        onCreateUpdateClick(values.name, values.read_only, values.methods, values.content_type);
+        const content_type = 'roles';
+        onCreateUpdateClick(values.name, values.read_only, values.methods, content_type);
     };
 
     return (
@@ -140,7 +141,7 @@ export const UserRoleCreateUpdateForm = () => {
                         }
                     </Select>
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                     name="content_type"
                     label="Content type"
                     rules={[
@@ -153,7 +154,7 @@ export const UserRoleCreateUpdateForm = () => {
                     initialValue={'roles'}
                 >
                     <Input disabled />
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item>
                     <Button type="primary" htmlType="submit" block loading={createUpdateLoaderState}>
                         {`${editFlag ? 'Update' : 'Create'} user role`}

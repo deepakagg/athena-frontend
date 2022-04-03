@@ -5,7 +5,7 @@ import moment from 'moment';
 import authService from 'services/authService';
 import styled from 'styled-components';
 import {
-	updateUserList, setUpdateUserModalViewState, setUserIdState, selectUserGroupList, updateCreateUserGroupModalViewState, updateUserGroupList,
+	updateUserList, setCreateUpdateUserGroupModalViewState, setUserIdState, selectUserGroupList, updateUserGroupList,
 } from '../../dashboardSlice';
 import Flex from 'views/dashboard-views/components/Flex';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -32,7 +32,7 @@ export const UserGroupList = () => {
 		setDatatableLoaderState(true);
 		authService.getUserGroups()
 			.then((userGrouplist) => { dispatch(updateUserGroupList(userGrouplist)); setDatatableLoaderState(false); })
-			.catch((e) => { console.log(e); dispatch(updateUserList([])); setDatatableLoaderState(false); })
+			.catch((e) => { console.log(e); dispatch(updateUserGroupList([])); setDatatableLoaderState(false); })
 	}, [dispatch]);
 
 	const openNotification = (isSuccess: boolean, message: string, description: string) => {
@@ -112,7 +112,7 @@ export const UserGroupList = () => {
 			<Card bodyStyle={{ 'padding': '0px' }}>
 				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
 					<StyledUserCreateButton>
-						<Button onClick={(e) => dispatch(updateCreateUserGroupModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user group</Button>
+						<Button onClick={(e) => dispatch(setCreateUpdateUserGroupModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user group</Button>
 					</StyledUserCreateButton>
 				</Flex>
 				<div className="table-responsive">

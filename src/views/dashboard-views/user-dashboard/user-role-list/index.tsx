@@ -5,7 +5,7 @@ import moment from 'moment';
 import authService from 'services/authService';
 import styled from 'styled-components';
 import {
-	updateUserList, setUpdateUserModalViewState, setUserIdState, selectUserRoleList, updateCreateUserRoleModalViewState, updateUserRoleList,
+	updateUserList, setCreateUpdateUserRoleModalViewState, setUserIdState, selectUserRoleList, updateUserRoleList,
 } from '../../dashboardSlice';
 import Flex from 'views/dashboard-views/components/Flex';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -32,7 +32,7 @@ export const UserRoleList = () => {
 		setDatatableLoaderState(true);
 		authService.getUserRoles()
 			.then((userRoleList) => { dispatch(updateUserRoleList(userRoleList)); setDatatableLoaderState(false); })
-			.catch((e) => { console.log(e); dispatch(updateUserList([])); setDatatableLoaderState(false); })
+			.catch((e) => { console.log(e); dispatch(updateUserRoleList([])); setDatatableLoaderState(false); })
 	}, [dispatch]);
 
 	const openNotification = (isSuccess: boolean, message: string, description: string) => {
@@ -127,7 +127,7 @@ export const UserRoleList = () => {
 			<Card bodyStyle={{ 'padding': '0px' }}>
 				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
 					<StyledUserCreateButton>
-						<Button onClick={(e) => dispatch(updateCreateUserRoleModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user role</Button>
+						<Button onClick={(e) => dispatch(setCreateUpdateUserRoleModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user role</Button>
 					</StyledUserCreateButton>
 				</Flex>
 				<div className="table-responsive">

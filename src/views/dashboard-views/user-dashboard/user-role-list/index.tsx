@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
+import { Card, Table, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
 import { DeleteOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons';
-import moment from 'moment';
 import authService from 'services/authService';
 import styled from 'styled-components';
 import {
-	updateUserList, setCreateUpdateUserRoleModalViewState, setUserIdState, selectUserRoleList, updateUserRoleList,
+	setCreateUpdateUserRoleModalViewState, selectUserRoleList, updateUserRoleList, setUserRoleIdState, setEditFlag, selectEditFlag, selectUserRoleId, selectCreateUpdateUserRoleModalViewState,
 } from '../../dashboardSlice';
 import Flex from 'views/dashboard-views/components/Flex';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -65,19 +64,15 @@ export const UserRoleList = () => {
 		}
 	}
 
-	// const updateUser = async () => {
-	// 	dispatch(setUpdateUserModalViewState(true));
-	// }
-
 	const tableColumns: any = [
 		{
-            title: 'Id',
-            dataIndex: 'id',
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-        },
+			title: 'Id',
+			dataIndex: 'id',
+		},
+		{
+			title: 'Name',
+			dataIndex: 'name',
+		},
 		{
 			title: 'Read only',
 			dataIndex: 'read_only',
@@ -85,31 +80,35 @@ export const UserRoleList = () => {
 				<span>{read_only.toString()} </span>
 			),
 		},
-        {
-            title: 'Methods',
-            dataIndex: 'methods',
-            render: (methods: any) => (
-                <ReactJson collapsed={true} src={methods} enableClipboard={false} />
-            ),
-        },
+		{
+			title: 'Methods',
+			dataIndex: 'methods',
+			render: (methods: any) => (
+				<ReactJson collapsed={true} src={methods} enableClipboard={false} />
+			),
+		},
 		{
 			title: 'Query',
 			dataIndex: 'query',
 		},
 		{
-            title: 'Content type',
-            dataIndex: 'content_type',
-        },
+			title: 'Content type',
+			dataIndex: 'content_type',
+		},
 		{
 			title: '',
 			dataIndex: 'actions',
 			render: (_: any, elm: { id: any, name: any }) => (
 				<div className="text-right d-flex justify-content-end">
-					{/* <SpacedActionItem>
+					<SpacedActionItem>
 						<Tooltip title="Edit">
-							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => {
+								dispatch(setEditFlag(true));
+								dispatch(setUserRoleIdState(elm.id as string));
+								dispatch(setCreateUpdateUserRoleModalViewState(true));
+							}} size="small" />
 						</Tooltip>
-					</SpacedActionItem> */}
+					</SpacedActionItem>
 					<SpacedActionItem>
 						<Tooltip title="Delete">
 							<Popconfirm placement="left" title={`Confirm delete role ${elm.name}?`} onConfirm={() => { deleteUserRole(elm.id, elm.name) }} okText="Yes" cancelText="No">
@@ -127,7 +126,10 @@ export const UserRoleList = () => {
 			<Card bodyStyle={{ 'padding': '0px' }}>
 				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
 					<StyledUserCreateButton>
-						<Button onClick={(e) => dispatch(setCreateUpdateUserRoleModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user role</Button>
+						<Button onClick={(e) => {
+							dispatch(setEditFlag(false));
+							dispatch(setCreateUpdateUserRoleModalViewState(true));
+						}} type="primary" icon={<UserAddOutlined />} block>Create user role</Button>
 					</StyledUserCreateButton>
 				</Flex>
 				<div className="table-responsive">

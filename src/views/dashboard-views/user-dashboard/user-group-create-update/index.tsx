@@ -2,13 +2,20 @@ import { Alert, Button, Form, Input, notification, Select } from "antd";
 import authService from '../../../../services/authService';
 import { useEffect, useState } from 'react';
 import {
+    selectCreateUpdateUserGroupModalViewState,
     selectEditFlag,
+    selectUserGroupId,
+    selectUserGroupList,
     selectUserRoleList,
     setCreateUpdateUserGroupModalViewState, updateUserGroupList, updateUserRoleList,
 } from '../../../dashboard-views/dashboardSlice';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 
 const { Option } = Select;
+
+interface IFormValue {
+    [key: string]: number | string | boolean;
+}
 
 export const UserGroupCreateUpdateForm = () => {
     const [form] = Form.useForm();
@@ -17,13 +24,34 @@ export const UserGroupCreateUpdateForm = () => {
     const [api, contextHolder] = notification.useNotification();
     const editFlag = useAppSelector(selectEditFlag);
     const userRoleList = useAppSelector(selectUserRoleList);
+    const userGroupList = useAppSelector(selectUserGroupList);
+    const userGroupId = useAppSelector(selectUserGroupId);
+    const userGroupModalState = useAppSelector(selectCreateUpdateUserGroupModalViewState);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-		authService.getUserRoles()
-			.then((userRoleList) => { dispatch(updateUserRoleList(userRoleList)); })
-			.catch((e) => { console.log(e); dispatch(updateUserRoleList([])); })
-	}, [dispatch]);
+        authService.getUserRoles()
+            .then((userRoleList) => { 
+                dispatch(updateUserRoleList(userRoleList)); 
+                if (editFlag) {
+                    if (userGroupId) {
+                        const userGroup = userGroupList.find(item => {
+                            return item.id === userGroupId
+                        })
+                        const roleIndexes = userGroup.roles.map((item: { id: any; }) => {
+                            return item.id;
+                        });
+                        const formData: IFormValue = {
+                            name: userGroup.name,
+                            roles: roleIndexes,
+                        };
+                        form.setFieldsValue(formData);
+                    }
+                }
+            })
+            .catch((e) => { console.log(e); dispatch(updateUserRoleList([])); })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userGroupModalState]);
 
     const openNotification = (isSuccess: boolean, message: string, description: string) => {
         const placement = 'topRight';
@@ -46,7 +74,13 @@ export const UserGroupCreateUpdateForm = () => {
     const onCreateUpdateClick = async (name: string, roles: Array<number>) => {
         setCreateUpdateState(true);
         setCreateUpdateLoaderState(true);
-        const response = await authService.createUserGroup(name, roles);
+        let response = undefined;
+        if(editFlag){
+            response = await authService.updateUserGroup(userGroupId as string, name, roles);
+        }
+        else {
+            response = await authService.createUserGroup(name, roles);
+        }
         setCreateUpdateState(response);
         setCreateUpdateLoaderState(false);
         if (dispatch) {

@@ -1,13 +1,20 @@
 import { Alert, Button, Form, Input, notification, Select, Switch } from "antd";
 import authService from '../../../../services/authService';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
+    selectCreateUpdateUserRoleModalViewState,
     selectEditFlag,
+    selectUserRoleId,
+    selectUserRoleList,
     setCreateUpdateUserRoleModalViewState, updateUserRoleList,
 } from '../../../dashboard-views/dashboardSlice';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 
 const { Option } = Select;
+
+interface IFormValue {
+    [key: string]: number | string | boolean;
+}
 
 export const UserRoleCreateUpdateForm = () => {
     const [form] = Form.useForm();
@@ -15,7 +22,28 @@ export const UserRoleCreateUpdateForm = () => {
     const [createUpdateLoaderState, setCreateUpdateLoaderState] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const editFlag = useAppSelector(selectEditFlag);
+    const userRoleList = useAppSelector(selectUserRoleList);
+    const userRoleId = useAppSelector(selectUserRoleId);
+    const userRoleModalState = useAppSelector(selectCreateUpdateUserRoleModalViewState);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+		if (editFlag) {
+			if (userRoleId) {
+				const userRole = userRoleList.find(item => {
+					return item.id === userRoleId
+				 })
+				const formData: IFormValue = {
+                    name: userRole.name,
+                    read_only: userRole.read_only,
+                    methods: userRole.methods,
+                    content_type: userRole.content_type,
+                };
+                form.setFieldsValue(formData);
+			}
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userRoleModalState]);
 
     const openNotification = (isSuccess: boolean, message: string, description: string) => {
         const placement = 'topRight';
@@ -38,7 +66,13 @@ export const UserRoleCreateUpdateForm = () => {
     const onCreateUpdateClick = async (name: string, read_only: boolean, methods: Array<string>, content_type: string) => {
         setCreateUpdateState(true);
         setCreateUpdateLoaderState(true);
-        const response = await authService.createUserRole(name, read_only, methods, content_type);
+        let response = undefined;
+        if(editFlag){
+            response = await authService.updateUserRole(userRoleId as string, name, read_only, methods, content_type);
+        }
+        else {
+            response = await authService.createUserRole(name, read_only, methods, content_type);
+        }
         setCreateUpdateState(response);
         setCreateUpdateLoaderState(false);
         if (dispatch) {
@@ -60,6 +94,7 @@ export const UserRoleCreateUpdateForm = () => {
     }
 
     const onFinish = (values: any) => {
+        // console.log(values);
         onCreateUpdateClick(values.name, values.read_only, values.methods, values.content_type);
     };
 

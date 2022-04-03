@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Tag, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
+import { Card, Table, Tooltip, Button, Popconfirm, notification, Spin } from 'antd';
 import { DeleteOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons';
-import moment from 'moment';
 import authService from 'services/authService';
 import styled from 'styled-components';
 import {
-	updateUserList, setCreateUpdateUserGroupModalViewState, setUserIdState, selectUserGroupList, updateUserGroupList,
+	setCreateUpdateUserGroupModalViewState, selectUserGroupList, updateUserGroupList, setEditFlag, setUserGroupIdState, selectEditFlag, selectUserGroupId, selectCreateUpdateUserGroupModalViewState,
 } from '../../dashboardSlice';
 import Flex from 'views/dashboard-views/components/Flex';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -71,30 +70,34 @@ export const UserGroupList = () => {
 
 	const tableColumns: any = [
 		{
-            title: 'Id',
-            dataIndex: 'id',
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-        },
+			title: 'Id',
+			dataIndex: 'id',
+		},
 		{
-            title: 'Roles',
-            dataIndex: 'roles',
-            render: (roles: any) => (
-                <ReactJson collapsed={true} src={roles} enableClipboard={false} />
-            ),
-        },
+			title: 'Name',
+			dataIndex: 'name',
+		},
+		{
+			title: 'Roles',
+			dataIndex: 'roles',
+			render: (roles: any) => (
+				<ReactJson collapsed={true} src={roles} enableClipboard={false} />
+			),
+		},
 		{
 			title: '',
 			dataIndex: 'actions',
 			render: (_: any, elm: { id: any; name: string }) => (
 				<div className="text-right d-flex justify-content-end">
-					{/* <SpacedActionItem>
+					<SpacedActionItem>
 						<Tooltip title="Edit">
-							<Button className="mr-2" icon={<EditOutlined />} onClick={() => { dispatch(setUserIdState(elm.id as string)); updateUser(); }} size="small" />
+							<Button className="mr-2" icon={<EditOutlined />} onClick={() => {
+								dispatch(setEditFlag(true));
+								dispatch(setUserGroupIdState(elm.id as string));
+								dispatch(setCreateUpdateUserGroupModalViewState(true));
+							}} size="small" />
 						</Tooltip>
-					</SpacedActionItem> */}
+					</SpacedActionItem>
 					<SpacedActionItem>
 						<Tooltip title="Delete">
 							<Popconfirm placement="left" title={`Confirm delete group ${elm.name}?`} onConfirm={() => { deleteUserGroup(elm.id, elm.name) }} okText="Yes" cancelText="No">
@@ -112,7 +115,10 @@ export const UserGroupList = () => {
 			<Card bodyStyle={{ 'padding': '0px' }}>
 				<Flex alignItems="center" justifyContent="between" mobileFlex={false}>
 					<StyledUserCreateButton>
-						<Button onClick={(e) => dispatch(setCreateUpdateUserGroupModalViewState(true))} type="primary" icon={<UserAddOutlined />} block>Create user group</Button>
+						<Button onClick={(e) => {
+							dispatch(setEditFlag(false));
+							dispatch(setCreateUpdateUserGroupModalViewState(true));
+						}} type="primary" icon={<UserAddOutlined />} block>Create user group</Button>
 					</StyledUserCreateButton>
 				</Flex>
 				<div className="table-responsive">

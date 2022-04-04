@@ -1,6 +1,7 @@
 import {
   UserOutlined,
-  DatabaseOutlined
+  DatabaseOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
 import { APP_PREFIX_PATH } from './AppConfig'
 
@@ -10,7 +11,17 @@ const dashBoardNavTree = [{
   title: 'Home',
   icon: UserOutlined,
   breadcrumb: true,
-  submenu: [{
+  submenu: [
+  {
+    key: 'reports',
+    path: `${APP_PREFIX_PATH}/user-dashboard/reports`,
+    title: 'Reports',
+    icon: FileTextOutlined,
+    breadcrumb: true,
+    submenu: [
+    ]
+  },
+  {
     key: 'manage-users',
     path: `${APP_PREFIX_PATH}/user-dashboard`,
     title: 'Manage users',
